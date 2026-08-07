@@ -1,7 +1,7 @@
 # secdoc skills
 
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Skills](https://img.shields.io/badge/skills-3-blue)
+![Skills](https://img.shields.io/badge/skills-4-blue)
 ![Format](https://img.shields.io/badge/format-Agent%20Skills%20(open%20standard)-informational)
 
 Practitioner-built skills for AI assistants — instruction sets that hold an assistant's output to the same standards I hold my own work to: framework claims with identifiers, versions verified before citing, vendor neutrality, and no invented data. I'm a working security architect; these were built for my own use, tested in real architecture and reporting work, and published here for anyone to install. Each one is an Agent Skill in the open skill format — a `SKILL.md` with YAML frontmatter plus optional reference files that load on demand — so they run in Claude and in any agent product that supports the format.
@@ -11,6 +11,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 - [Skill catalog](#skill-catalog)
   - [cybersecurity-architecture](#cybersecurity-architecture)
   - [networking-architecture](#networking-architecture)
+  - [network-engineering](#network-engineering)
   - [executive-reporting](#executive-reporting)
 - [Repository layout](#repository-layout)
 - [Installation](#installation)
@@ -26,6 +27,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 |---|---|---|---|
 | [cybersecurity-architecture](#cybersecurity-architecture) | Architecture-grade security work anchored to authoritative frameworks | MITRE ATT&CK/ATLAS, NIST SPs, CVSS, SOX/SOC 2/PCI DSS | [`packages/cybersecurity-architecture.skill`](packages/cybersecurity-architecture.skill) |
 | [networking-architecture](#networking-architecture) | Vendor-neutral enterprise network architecture guidance | WAN/SD-WAN, SASE/SSE, zero trust, segmentation, cloud/edge | [`packages/networking-architecture.skill`](packages/networking-architecture.skill) |
+| [network-engineering](#network-engineering) | Mechanically precise networking fundamentals | Routing protocols, OSI/TCP-IP models, troubleshooting, topology design | [`packages/network-engineering.skill`](packages/network-engineering.skill) |
 | [executive-reporting](#executive-reporting) | Turns messy mixed sources into traceable executive deliverables | Email briefs, Word reports, PowerPoint decks | [`packages/executive-reporting.skill`](packages/executive-reporting.skill) |
 
 ### cybersecurity-architecture
@@ -93,6 +95,33 @@ networking-architecture/
     └── wan-fundamentals.md
 ```
 
+### network-engineering
+
+Networking fundamentals at the level of mechanism, not summary: routing protocol internals for OSPF, EIGRP, BGP, RIP, and IS-IS; the OSI and TCP/IP models with their associated protocols — ARP through TLS — including a layer-by-layer troubleshooting methodology; and topology and design engineering from the three-tier campus model to spine-leaf fabrics.
+
+Its stance is the counterpart to its market-facing sibling: fundamentals age slowly. OSPF's SPF calculation and BGP's path selection don't shift with vendor announcements, so this material is durable in a way the SASE and SD-WAN market is not — with one exception the skill names itself. Standards-revision items — RFC updates, protocol deprecations, IEEE amendment status — get flagged for verification rather than asserted from memory.
+
+The boundary with `networking-architecture` is stated in the frontmatter and holds cleanly: strategy and market questions — SD-WAN vs MPLS adoption, SASE/SSE, ZTNA rollout, cloud transit — belong to `networking-architecture`. Questions that span both, like routing design for an SD-WAN migration, compose the two skills rather than duplicating either.
+
+**Triggers when** you ask how a routing protocol actually works, need a layer-by-layer walk through the OSI or TCP/IP models and their protocols, are troubleshooting by layer, are designing or reviewing a topology from campus three-tier to spine-leaf — and in teaching contexts: Network+ and CCNA study questions trigger it too.
+
+**What it will not do:** it does not answer strategy and market questions — those are `networking-architecture`'s trigger space, and this skill defers to it rather than overlapping.
+
+**Reference files:**
+
+- `routing-protocols.md` — protocol internals for OSPF, EIGRP, BGP, RIP, and IS-IS
+- `osi-model-protocols.md` — the OSI and TCP/IP models, their associated protocols, and the layer-by-layer troubleshooting method
+- `topology-design.md` — topology and design engineering, three-tier campus through spine-leaf
+
+```
+network-engineering/
+├── SKILL.md
+└── references/
+    ├── osi-model-protocols.md
+    ├── routing-protocols.md
+    └── topology-design.md
+```
+
 ### executive-reporting
 
 Synthesizes messy mixed sources — email threads, documents, spreadsheets, web data, meeting notes, metrics exports — into executive deliverables in three output types: an email brief, a Word report, or a PowerPoint deck. Document production itself is delegated to the platform's document skills; this skill's job is the synthesis discipline in front of it.
@@ -135,12 +164,16 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 ├── networking-architecture/
 │   ├── SKILL.md
 │   └── references/
+├── network-engineering/
+│   ├── SKILL.md
+│   └── references/
 ├── executive-reporting/
 │   ├── SKILL.md
 │   └── references/
 ├── packages/
 │   ├── cybersecurity-architecture.skill
 │   ├── networking-architecture.skill
+│   ├── network-engineering.skill
 │   └── executive-reporting.skill
 ├── LICENSE
 └── README.md
@@ -204,6 +237,8 @@ These are the rules the skills enforce on themselves, and they're the same rules
 **Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, vendor market positions — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
 
 **Vendor-neutral throughout.** Categories, representative players, and selection criteria — never a single vendor as the answer.
+
+**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market — and a question spanning both composes the two rather than getting a half-answer from either.
 
 **Reference files load on demand.** The core `SKILL.md` stays lean; deep material sits in `references/` and loads only when the task calls for it. That's what the format is for.
 
