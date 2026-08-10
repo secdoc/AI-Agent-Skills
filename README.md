@@ -1,7 +1,7 @@
 # secdoc skills
 
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Skills](https://img.shields.io/badge/skills-4-blue)
+![Skills](https://img.shields.io/badge/skills-6-blue)
 ![Format](https://img.shields.io/badge/format-Agent%20Skills%20(open%20standard)-informational)
 
 Practitioner-built skills for AI assistants — instruction sets that hold an assistant's output to the same standards I hold my own work to: framework claims with identifiers, versions verified before citing, vendor neutrality, and no invented data. I'm a working security architect; these were built for my own use, tested in real architecture and reporting work, and published here for anyone to install. Each one is an Agent Skill in the open skill format — a `SKILL.md` with YAML frontmatter plus optional reference files that load on demand — so they run in Claude and in any agent product that supports the format.
@@ -10,6 +10,8 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 
 - [Skill catalog](#skill-catalog)
   - [cybersecurity-architecture](#cybersecurity-architecture)
+  - [ai-ml-engineering](#ai-ml-engineering)
+  - [application-architecture](#application-architecture)
   - [networking-architecture](#networking-architecture)
   - [network-engineering](#network-engineering)
   - [executive-reporting](#executive-reporting)
@@ -26,6 +28,8 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 | Skill | Purpose | Domains | Package |
 |---|---|---|---|
 | [cybersecurity-architecture](#cybersecurity-architecture) | Architecture-grade security work anchored to authoritative frameworks | MITRE ATT&CK/ATLAS, NIST SPs, CVSS, SOX/SOC 2/PCI DSS | [`packages/cybersecurity-architecture.skill`](packages/cybersecurity-architecture.skill) |
+| [ai-ml-engineering](#ai-ml-engineering) | ML, deep learning, and LLM systems with the hype stripped out | Classical ML, DL, LLM/genAI, MLOps, AI security/governance, math foundations | [`packages/ai-ml-engineering.skill`](packages/ai-ml-engineering.skill) |
+| [application-architecture](#application-architecture) | Application design and language engineering with trade-offs stated | Architecture patterns, C++/Java/.NET/Python/shell, dev practices, data structures | [`packages/application-architecture.skill`](packages/application-architecture.skill) |
 | [networking-architecture](#networking-architecture) | Vendor-neutral enterprise network architecture guidance | WAN/SD-WAN, SASE/SSE, zero trust, segmentation, cloud/edge | [`packages/networking-architecture.skill`](packages/networking-architecture.skill) |
 | [network-engineering](#network-engineering) | Mechanically precise networking fundamentals | Routing protocols, OSI/TCP-IP models, troubleshooting, topology design | [`packages/network-engineering.skill`](packages/network-engineering.skill) |
 | [executive-reporting](#executive-reporting) | Turns messy mixed sources into traceable executive deliverables | Email briefs, Word reports, PowerPoint decks | [`packages/executive-reporting.skill`](packages/executive-reporting.skill) |
@@ -64,6 +68,87 @@ cybersecurity-architecture/
     ├── mitre-atlas.md
     ├── mitre-attack.md
     └── nist-sp.md
+```
+
+### ai-ml-engineering
+
+Machine learning, deep learning, and LLM/generative-AI systems, plus the capability stack that makes them survive production — data and MLOps, AI security and governance, and the mathematical foundations underneath. Its opening premise, stated in the skill: the mechanics of this field are real and durable, the marketing wrapped around them is mostly noise, and the practical failure modes — leakage, evaluation theater, unmonitored drift, prompt injection treated as a curiosity — are where projects actually die.
+
+The standards it enforces on itself:
+
+- **Mechanics before magic.** Every capability claim traces to how the mechanism produces it. What can't be explained mechanically gets flagged as an empirical observation, not understanding — "scaling laws are measured regularities, not derived theory" is the honest register.
+- **The perishability rule — the strictest in this library.** Model names, benchmark standings, tool recommendations, pricing, context-window sizes, and regulatory status are verified at use time and dated in the answer, never asserted from training memory. The durable layer — how attention works, why leakage invalidates evaluation, what drift is — is taught as durable, and the reference files are built on that split.
+- **The anti-hype standard.** Capabilities and limitations get equal prominence, adoption recommendations state what a technique costs next to what it promises, and "you may not need ML for this" is a first-class answer.
+- **Evaluation honesty.** No metric is reported without its failure mode — accuracy on imbalanced classes, ROC-AUC with a rare positive class, potentially contaminated LLM benchmarks all carry their caveat in the same breath. Leakage is named as the field's number-one practical failure and checked for in any workflow the skill reviews or produces.
+
+It also carries a teaching mode — intuition first, mechanism second, math third, misconception check last — with the recurring misconceptions named: "the model understands," "more data always helps," "RAG eliminates hallucination."
+
+**Triggers when** you mention machine learning, deep learning, neural networks, training or fine-tuning, named algorithms, LLMs, RAG, embeddings, prompt engineering, AI agents, hallucination, model evaluation, MLOps, drift, adversarial ML, AI governance, or ask "should we use AI for X" — and in teaching contexts, from ML coursework to "explain how neural networks learn."
+
+**What it will not do alone:** ATLAS mapping, AI threat modeling, and security architecture reviews compose with `cybersecurity-architecture` — this skill supplies the ML mechanics those attacks exploit, that one supplies the framework mapping and review method. General Python and architecture questions compose with `application-architecture`; executive deliverables about AI initiatives compose with `executive-reporting`.
+
+**Reference files:**
+
+- `ml-fundamentals.md` — classical ML: algorithm selection, feature engineering, evaluation design, cross-validation, leakage, metric choice
+- `deep-learning.md` — how networks learn, optimizers, regularization, CNN/RNN/transformer architectures, fine-tuning vs. LoRA, quantization and distillation
+- `llm-genai.md` — prompting, RAG design and evaluation, agents and tool use, hallucination and mitigation, the build-choice ladder, generative evaluation
+- `mlops-data.md` — pipelines, versioning, experiment tracking, deployment patterns, monitoring and drift, retraining, cost engineering, why ML projects fail
+- `ai-security-governance.md` — adversarial ML mechanics, prompt injection and defenses, NIST AI RMF, regulation (verify-current), fairness, explainability, model cards
+- `math-stats-foundations.md` — probability, statistics for experiments, linear algebra, gradients and the chain rule, entropy and cross-entropy
+
+```
+ai-ml-engineering/
+├── SKILL.md
+└── references/
+    ├── ai-security-governance.md
+    ├── deep-learning.md
+    ├── llm-genai.md
+    ├── math-stats-foundations.md
+    ├── ml-fundamentals.md
+    └── mlops-data.md
+```
+
+### application-architecture
+
+Application and service design, language-level engineering in five ecosystems — C++, Java, C#/.NET, Python, and Bash/PowerShell — the development practices around the code, and data-structure selection. Eight reference files carry the depth; the SKILL.md body carries the standards.
+
+The rules it states for itself:
+
+- **Trade-offs are mandatory.** Every architectural recommendation states its cost and the scale at which it stops being right. A pattern proposed without its cost is marketing, not architecture — "use a circuit breaker" is incomplete; "use a circuit breaker, it adds state you must tune, and below ~3 downstream dependencies a plain timeout is simpler and sufficient" is an answer.
+- **Code is idiomatic to its language.** Never Java-shaped Python or C-shaped C++. When a practice doesn't translate across ecosystems — checked exceptions, header hygiene, LINQ habits — it says so rather than porting silently.
+- **Version-sensitive facts get verified at use time.** Current language standards, LTS lines, runtime support windows: searched and dated, because training memory is not a source for anything with an end-of-life date.
+- **Complexity claims are honest.** Big-O first, then the constant-factor and cache-behavior caveats that make the textbook answer wrong at real sizes.
+- **Code compiles and runs as written** for a named language version, with comments that explain why, never narrate what.
+
+Like its AI/ML sibling, it carries a teaching mode — concept before syntax, one worked example before the general rule, misconception check after, with the classics named: "microservices are more scalable" as a reflex, mutable default arguments in Python, `==` versus `.equals()` in Java, unquoted variables in Bash.
+
+**Triggers when** you ask how to structure an application, service, or API; name a design pattern; weigh microservices vs monolith; ask a language-specific question in any of the five ecosystems; request a code review; ask "which data structure"; or raise refactoring, technical debt, testing strategy, or CI/CD. REST design, CQRS, async/await, the GIL, RAII, ShellCheck, or hash tables all qualify — the word "architecture" isn't required. Teaching contexts, from coursework to certification study, trigger it too.
+
+**What it will not do alone:** security architecture, threat modeling, and compliance mapping compose with `cybersecurity-architecture` — this skill supplies secure-coding practice, that one supplies the framework layer. Network behavior questions compose with `network-engineering`; reporting deliverables about development work compose with `executive-reporting`.
+
+**Reference files:**
+
+- `architecture-patterns.md` — system/service/API structure, microservices vs monolith, resilience, caching, observability
+- `cpp.md` — RAII, ownership, move semantics, undefined behavior, sanitizers, build reality
+- `java.md` — collections, streams, concurrency, records, GC, build tooling, LTS lines
+- `dotnet.md` — async/await, LINQ, nullable references, DI, EF Core, release cadence
+- `python.md` — idioms, typing, packaging, GIL and concurrency, performance, traps
+- `shell-scripting.md` — Bash and PowerShell safety discipline, pipeline models, and the promotion rule
+- `development-practices.md` — version control, testing strategy, code review, CI/CD, dependencies, secure coding, debugging, performance
+- `data-structures.md` — selection, complexity honesty, and per-language stdlib mapping
+
+```
+application-architecture/
+├── SKILL.md
+└── references/
+    ├── architecture-patterns.md
+    ├── cpp.md
+    ├── data-structures.md
+    ├── development-practices.md
+    ├── dotnet.md
+    ├── java.md
+    ├── python.md
+    └── shell-scripting.md
 ```
 
 ### networking-architecture
@@ -161,6 +246,12 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 ├── cybersecurity-architecture/
 │   ├── SKILL.md
 │   └── references/
+├── ai-ml-engineering/
+│   ├── SKILL.md
+│   └── references/
+├── application-architecture/
+│   ├── SKILL.md
+│   └── references/
 ├── networking-architecture/
 │   ├── SKILL.md
 │   └── references/
@@ -172,6 +263,8 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 │   └── references/
 ├── packages/
 │   ├── cybersecurity-architecture.skill
+│   ├── ai-ml-engineering.skill
+│   ├── application-architecture.skill
 │   ├── networking-architecture.skill
 │   ├── network-engineering.skill
 │   └── executive-reporting.skill
@@ -234,11 +327,11 @@ These are the rules the skills enforce on themselves, and they're the same rules
 
 **Framework claims carry identifiers.** A control ID, a technique ID, a requirement number, a vector string. A claim that can't be pinned to an identifier gets verified or gets flagged — it doesn't get asserted.
 
-**Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, vendor market positions — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
+**Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, language LTS lines, model names and benchmarks, vendor market positions — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
 
 **Vendor-neutral throughout.** Categories, representative players, and selection criteria — never a single vendor as the answer.
 
-**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market — and a question spanning both composes the two rather than getting a half-answer from either.
+**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method — and a question spanning boundaries composes the skills rather than getting a half-answer from either.
 
 **Reference files load on demand.** The core `SKILL.md` stays lean; deep material sits in `references/` and loads only when the task calls for it. That's what the format is for.
 
