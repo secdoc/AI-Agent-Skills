@@ -27,7 +27,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 
 | Skill | Purpose | Domains | Package |
 |---|---|---|---|
-| [cybersecurity-architecture](#cybersecurity-architecture) | Architecture-grade security work anchored to authoritative frameworks | MITRE ATT&CK/ATLAS, NIST SPs, CVSS, SOX/SOC 2/PCI DSS | [`packages/cybersecurity-architecture.skill`](packages/cybersecurity-architecture.skill) |
+| [cybersecurity-architecture](#cybersecurity-architecture) | Architecture-grade security work anchored to authoritative frameworks | MITRE ATT&CK/ATLAS, NIST SPs, CVSS, SOX/SOC 2/PCI DSS/GDPR/CMMC, eight practice domains from secops to governance | [`packages/cybersecurity-architecture.skill`](packages/cybersecurity-architecture.skill) |
 | [ai-ml-engineering](#ai-ml-engineering) | ML, deep learning, and LLM systems with the hype stripped out | Classical ML, DL, LLM/genAI, MLOps, AI security/governance, math foundations | [`packages/ai-ml-engineering.skill`](packages/ai-ml-engineering.skill) |
 | [application-architecture](#application-architecture) | Application design and language engineering with trade-offs stated | Architecture patterns, C++/Java/.NET/Python/shell, dev practices, data structures | [`packages/application-architecture.skill`](packages/application-architecture.skill) |
 | [networking-architecture](#networking-architecture) | Vendor-neutral enterprise network architecture guidance | WAN/SD-WAN, SASE/SSE, zero trust, segmentation, cloud/edge | [`packages/networking-architecture.skill`](packages/networking-architecture.skill) |
@@ -36,18 +36,20 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 
 ### cybersecurity-architecture
 
-Security architecture work that a senior practitioner could defend in front of an audit committee, a CISO, or an assessor. It grounds analysis in MITRE ATT&CK and ATLAS, the NIST Special Publications (800-53, 800-37, 800-30, 800-171, 800-207, and the CSF), CVSS scoring, and the compliance regimes I work with most — SOX, SOC 2, and PCI DSS.
+Security architecture work that a senior practitioner could defend in front of an audit committee, a CISO, or an assessor. It grounds analysis in MITRE ATT&CK and ATLAS, the NIST Special Publications (800-53, 800-37, 800-30, 800-171, 800-207, and the CSF), CVSS scoring, and the compliance regimes I work with most — SOX, SOC 2, PCI DSS, GDPR, and DoD CMMC.
 
 Two principles govern everything the skill produces, and they're stated in the skill itself:
 
-- **Cite specifically, never vaguely.** "NIST recommends MFA" is worthless in architecture work. Every framework claim carries an identifier — a control ID (AC-2(1)), a technique ID (T1078.004), a requirement number (PCI DSS 8.3.6), a Trust Services criterion (CC6.1). If the identifier can't be named, the skill says so and verifies before asserting.
-- **Verify versions before citing.** These frameworks move — ATT&CK ships two releases a year, CVSS v4.0 coexists with v3.1 in the wild, PCI DSS v4.0.1 superseded v4.0. When a citation carries version-sensitive weight, the skill confirms currency against the canonical source before presenting it, and flags the version when it can't.
+- **Cite specifically, never vaguely.** "NIST recommends MFA" is worthless in architecture work. Every framework claim carries an identifier — a control ID (AC-2(1)), a technique ID (T1078.004), a requirement number (PCI DSS 8.3.6), a Trust Services criterion (CC6.1), a GDPR article (Art. 32(1)), a CMMC practice tied to its 800-171 requirement. If the identifier can't be named, the skill says so and verifies before asserting.
+- **Verify versions before citing.** These frameworks move — ATT&CK ships two releases a year, CVSS v4.0 coexists with v3.1 in the wild, PCI DSS v4.0.1 superseded v4.0, and CMMC program status carries dates because the rulemaking timeline shifts. When a citation carries version-sensitive weight, the skill confirms currency against the canonical source before presenting it, and flags the version when it can't.
 
 The workflow maps to the adversary view first and controls second — compliance-first analysis produces checkbox architectures that pass audits and fail incidents — and every recommendation set ends with residual risk stated in writing.
 
-**Triggers when** you ask for security architecture reviews, threat modeling, control selection or mapping, risk assessment, vulnerability prioritization, compliance gap analysis, zero trust design, AI/ML system security, or audit prep — or when you hand it an artifact like a system design, a finding to score, an SoA, or a controls matrix, even without saying "architecture."
+Beyond the framework layer, the skill now carries eight practice-domain files — security operations, cloud and hybrid, endpoint, application security, data and cryptography, IAM, network and perimeter, and governance. Each follows the same shape (scope, architecture patterns, control mapping, decision criteria, assessment questions), each cross-references the framework files instead of restating them, and each draws its boundary toward its neighbors — including the sibling skills in this library — so a question routes to one owner instead of getting half-answers from three.
 
-**What it will not do:** it does not certify compliance — gap analyses inform, but only a QSA, CPA firm, or authorized assessor can attest. It does not resolve genuinely contestable scoping questions (PCI scope, SOX materiality) unilaterally; it flags them as assessor conversations. And it does not produce exploit code or offensive tooling — ATT&CK mapping stays on the defensive side of that line.
+**Triggers when** you ask for security architecture reviews, threat modeling, control selection or mapping, risk assessment, vulnerability prioritization, compliance gap analysis, zero trust design, AI/ML system security, or audit prep — or a domain question in SOC/SIEM/detection engineering, incident response, cloud security, endpoint/EDR, secure SDLC and supply chain, DLP/encryption/key management, IAM/PAM/federation, segmentation/ZTNA, governance and risk programs, or CMMC/CUI scoping — or when you hand it an artifact like a system design, a finding to score, an SoA, or a controls matrix, even without saying "architecture."
+
+**What it will not do:** it does not certify compliance — gap analyses inform, but only a QSA, CPA firm, C3PAO, or authorized assessor can attest, and GDPR interpretation questions route to counsel or a DPO, not to the skill. It does not resolve genuinely contestable scoping questions (PCI scope, SOX materiality, CUI boundaries) unilaterally; it flags them as assessor conversations. And it does not produce exploit code or offensive tooling — ATT&CK mapping stays on the defensive side of that line.
 
 **Reference files:**
 
@@ -55,8 +57,16 @@ The workflow maps to the adversary view first and controls second — compliance
 - `mitre-atlas.md` — AI/ML threat modeling organized by system lifecycle
 - `nist-sp.md` — which SP answers which question, working with 800-53 Rev. 5 and 800-30, and crosswalking
 - `cvss.md` — scoring conventions (full vector strings, always), v3.1 vs v4.0, and prioritization beyond the number
-- `compliance.md` — SOX, SOC 2, and PCI DSS, the crosswalk pattern, and boundary discipline
+- `compliance.md` — SOX, SOC 2, PCI DSS, GDPR, and CMMC, the crosswalk pattern, and boundary discipline
 - `architecture-best-practices.md` — principles, reference models, review method, and the recommendation quality bar
+- `domain-secops.md` — SOC design, SIEM and telemetry architecture, detection engineering, SOAR, threat intel and hunting, incident response
+- `domain-cloud-hybrid.md` — shared responsibility, landing zones, IaC security, workload identity, hybrid trust boundaries, container/Kubernetes
+- `domain-endpoint.md` — the layered endpoint stack, EPP/EDR/XDR, mobile and BYOD, privileged workstation patterns, OT/IoT exceptions
+- `domain-appsec.md` — secure-SDLC gate placement, threat modeling as a program, supply chain, API security, secrets management
+- `domain-data-crypto.md` — classification and lifecycle, encryption across states, key management, DLP, tokenization, post-quantum readiness
+- `domain-iam.md` — directory and IdP design, authentication, authorization models, privileged access, identity governance, non-human identity
+- `domain-network-perimeter.md` — trust boundaries and segmentation design, the policy layer above the devices, network detection, TLS inspection
+- `domain-governance.md` — operating model, policy hierarchy, risk machinery, metrics, third-party risk, the compliance program as integration layer
 
 ```
 cybersecurity-architecture/
@@ -65,6 +75,14 @@ cybersecurity-architecture/
     ├── architecture-best-practices.md
     ├── compliance.md
     ├── cvss.md
+    ├── domain-appsec.md
+    ├── domain-cloud-hybrid.md
+    ├── domain-data-crypto.md
+    ├── domain-endpoint.md
+    ├── domain-governance.md
+    ├── domain-iam.md
+    ├── domain-network-perimeter.md
+    ├── domain-secops.md
     ├── mitre-atlas.md
     ├── mitre-attack.md
     └── nist-sp.md
@@ -327,11 +345,11 @@ These are the rules the skills enforce on themselves, and they're the same rules
 
 **Framework claims carry identifiers.** A control ID, a technique ID, a requirement number, a vector string. A claim that can't be pinned to an identifier gets verified or gets flagged — it doesn't get asserted.
 
-**Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, language LTS lines, model names and benchmarks, vendor market positions — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
+**Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, CMMC program status, language LTS lines, model names and benchmarks, vendor market positions — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
 
 **Vendor-neutral throughout.** Categories, representative players, and selection criteria — never a single vendor as the answer.
 
-**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method — and a question spanning boundaries composes the skills rather than getting a half-answer from either.
+**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method — and a question spanning boundaries composes the skills rather than getting a half-answer from either. The cybersecurity-architecture domain files carry these boundary sentences internally too: its network-perimeter file owns security policy and zone architecture while device engineering stays with `network-engineering` and SASE strategy with `networking-architecture`, and its appsec file owns gate placement while coding practice stays with `application-architecture`.
 
 **Reference files load on demand.** The core `SKILL.md` stays lean; deep material sits in `references/` and loads only when the task calls for it. That's what the format is for.
 
@@ -351,9 +369,9 @@ I'm a senior cybersecurity architect with 25+ years in the field, author of the 
 
 This repository is licensed under the [Apache License 2.0](LICENSE).
 
-These skills reference security frameworks, standards, and compliance regimes, but their output is not legal, audit, or compliance advice, and it is not an attestation of anything. Gap analyses and mappings produced with these skills inform your work; only a qualified assessor can certify it.
+These skills reference security frameworks, standards, and compliance regimes, but their output is not legal, audit, or compliance advice, and it is not an attestation of anything. Gap analyses and mappings produced with these skills inform your work; only a qualified assessor can certify it, and GDPR questions with legal weight belong with counsel or a DPO.
 
-MITRE ATT&CK® and MITRE ATLAS are the work of The MITRE Corporation, with ATT&CK's registered mark acknowledged. NIST publications are the work of the National Institute of Standards and Technology. CVSS is maintained by FIRST. PCI DSS belongs to the PCI Security Standards Council; SOC 2 to the AICPA. All cited frameworks and standards belong to their respective owners; this repository maps to them, it doesn't reproduce or replace them.
+MITRE ATT&CK® and MITRE ATLAS are the work of The MITRE Corporation, with ATT&CK's registered mark acknowledged. NIST publications are the work of the National Institute of Standards and Technology. CVSS is maintained by FIRST. PCI DSS belongs to the PCI Security Standards Council; SOC 2 to the AICPA; CMMC to the U.S. Department of Defense; the GDPR to the European Union. All cited frameworks and standards belong to their respective owners; this repository maps to them, it doesn't reproduce or replace them.
 
 ## Contributing
 
