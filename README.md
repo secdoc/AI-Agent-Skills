@@ -28,13 +28,13 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 
 | Skill | Purpose | Domains | Package |
 |---|---|---|---|
-| [cybersecurity-architecture](#cybersecurity-architecture) | Architecture-grade security work anchored to authoritative frameworks | MITRE ATT&CK/ATLAS, NIST SPs, CVSS, SOX/SOC 2/PCI DSS/GDPR/CMMC, eight practice domains from secops to governance | [`packages/cybersecurity-architecture.skill`](packages/cybersecurity-architecture.skill) |
-| [ai-ml-engineering](#ai-ml-engineering) | ML, deep learning, and LLM systems with the hype stripped out | Classical ML, DL, LLM/genAI, MLOps, AI security/governance, math foundations | [`packages/ai-ml-engineering.skill`](packages/ai-ml-engineering.skill) |
-| [application-architecture](#application-architecture) | Application design and language engineering with trade-offs stated | Architecture patterns, C++/Java/.NET/Python/shell, dev practices, data structures | [`packages/application-architecture.skill`](packages/application-architecture.skill) |
-| [code-security-analysis](#code-security-analysis) | Hands-on security review of code and artifacts — findings that get fixed | Vulnerability classes, secrets, dependencies/supply chain, config/IaC, data handling, reporting | [`packages/code-security-analysis.skill`](packages/code-security-analysis.skill) |
-| [networking-architecture](#networking-architecture) | Vendor-neutral enterprise network architecture guidance | WAN/SD-WAN, SASE/SSE, zero trust, segmentation, cloud/edge | [`packages/networking-architecture.skill`](packages/networking-architecture.skill) |
-| [network-engineering](#network-engineering) | Mechanically precise networking fundamentals | Routing protocols, OSI/TCP-IP models, troubleshooting, topology design | [`packages/network-engineering.skill`](packages/network-engineering.skill) |
-| [executive-reporting](#executive-reporting) | Turns messy mixed sources into traceable executive deliverables | Email briefs, Word reports, PowerPoint decks | [`packages/executive-reporting.skill`](packages/executive-reporting.skill) |
+| [cybersecurity-architecture](#cybersecurity-architecture) | Architecture-grade security work anchored to authoritative frameworks | MITRE ATT&CK/ATLAS, NIST SPs, CVSS, SOX/SOC 2/PCI DSS/GDPR/CMMC, eight practice domains from secops to governance | [`/cybersecurity-architecture.skill`](/cybersecurity-architecture.skill) |
+| [ai-ml-engineering](#ai-ml-engineering) | ML, deep learning, and LLM systems with the hype stripped out | Classical ML, DL, LLM/genAI, MLOps, AI security/governance, math foundations | [`/ai-ml-engineering.skill`](/ai-ml-engineering.skill) |
+| [application-architecture](#application-architecture) | Application design and language engineering with trade-offs stated | Architecture patterns, C++/Java/.NET/Python/shell, dev practices, data structures | [`/application-architecture.skill`](/application-architecture.skill) |
+| [code-security-analysis](#code-security-analysis) | Hands-on security review of code and artifacts — findings that get fixed | Vulnerability classes, secrets, dependencies/supply chain, config/IaC, data handling, reporting | [`/code-security-analysis.skill`](/code-security-analysis.skill) |
+| [networking-architecture](#networking-architecture) | Vendor-neutral enterprise network architecture guidance | WAN/SD-WAN, SASE/SSE, zero trust, segmentation, cloud/edge | [`/networking-architecture.skill`](/networking-architecture.skill) |
+| [network-engineering](#network-engineering) | Mechanically precise networking fundamentals | Routing protocols, OSI/TCP-IP models, troubleshooting, topology design | [`/network-engineering.skill`](/network-engineering.skill) |
+| [executive-reporting](#executive-reporting) | Turns messy mixed sources into traceable executive deliverables | Email briefs, Word reports, PowerPoint decks | [`/executive-reporting.skill`](/executive-reporting.skill) |
 
 ### cybersecurity-architecture
 
