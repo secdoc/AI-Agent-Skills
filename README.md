@@ -1,7 +1,7 @@
 # secdoc skills
 
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Skills](https://img.shields.io/badge/skills-6-blue)
+![Skills](https://img.shields.io/badge/skills-7-blue)
 ![Format](https://img.shields.io/badge/format-Agent%20Skills%20(open%20standard)-informational)
 
 Practitioner-built skills for AI assistants — instruction sets that hold an assistant's output to the same standards I hold my own work to: framework claims with identifiers, versions verified before citing, vendor neutrality, and no invented data. I'm a working security architect; these were built for my own use, tested in real architecture and reporting work, and published here for anyone to install. Each one is an Agent Skill in the open skill format — a `SKILL.md` with YAML frontmatter plus optional reference files that load on demand — so they run in Claude and in any agent product that supports the format.
@@ -12,6 +12,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
   - [cybersecurity-architecture](#cybersecurity-architecture)
   - [ai-ml-engineering](#ai-ml-engineering)
   - [application-architecture](#application-architecture)
+  - [code-security-analysis](#code-security-analysis)
   - [networking-architecture](#networking-architecture)
   - [network-engineering](#network-engineering)
   - [executive-reporting](#executive-reporting)
@@ -30,6 +31,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 | [cybersecurity-architecture](#cybersecurity-architecture) | Architecture-grade security work anchored to authoritative frameworks | MITRE ATT&CK/ATLAS, NIST SPs, CVSS, SOX/SOC 2/PCI DSS/GDPR/CMMC, eight practice domains from secops to governance | [`packages/cybersecurity-architecture.skill`](packages/cybersecurity-architecture.skill) |
 | [ai-ml-engineering](#ai-ml-engineering) | ML, deep learning, and LLM systems with the hype stripped out | Classical ML, DL, LLM/genAI, MLOps, AI security/governance, math foundations | [`packages/ai-ml-engineering.skill`](packages/ai-ml-engineering.skill) |
 | [application-architecture](#application-architecture) | Application design and language engineering with trade-offs stated | Architecture patterns, C++/Java/.NET/Python/shell, dev practices, data structures | [`packages/application-architecture.skill`](packages/application-architecture.skill) |
+| [code-security-analysis](#code-security-analysis) | Hands-on security review of code and artifacts — findings that get fixed | Vulnerability classes, secrets, dependencies/supply chain, config/IaC, data handling, reporting | [`packages/code-security-analysis.skill`](packages/code-security-analysis.skill) |
 | [networking-architecture](#networking-architecture) | Vendor-neutral enterprise network architecture guidance | WAN/SD-WAN, SASE/SSE, zero trust, segmentation, cloud/edge | [`packages/networking-architecture.skill`](packages/networking-architecture.skill) |
 | [network-engineering](#network-engineering) | Mechanically precise networking fundamentals | Routing protocols, OSI/TCP-IP models, troubleshooting, topology design | [`packages/network-engineering.skill`](packages/network-engineering.skill) |
 | [executive-reporting](#executive-reporting) | Turns messy mixed sources into traceable executive deliverables | Email briefs, Word reports, PowerPoint decks | [`packages/executive-reporting.skill`](packages/executive-reporting.skill) |
@@ -142,7 +144,7 @@ Like its AI/ML sibling, it carries a teaching mode — concept before syntax, on
 
 **Triggers when** you ask how to structure an application, service, or API; name a design pattern; weigh microservices vs monolith; ask a language-specific question in any of the five ecosystems; request a code review; ask "which data structure"; or raise refactoring, technical debt, testing strategy, or CI/CD. REST design, CQRS, async/await, the GIL, RAII, ShellCheck, or hash tables all qualify — the word "architecture" isn't required. Teaching contexts, from coursework to certification study, trigger it too.
 
-**What it will not do alone:** security architecture, threat modeling, and compliance mapping compose with `cybersecurity-architecture` — this skill supplies secure-coding practice, that one supplies the framework layer. Network behavior questions compose with `network-engineering`; reporting deliverables about development work compose with `executive-reporting`.
+**What it will not do alone:** security architecture, threat modeling, and compliance mapping compose with `cybersecurity-architecture` — this skill supplies secure-coding practice, that one supplies the framework layer. Hands-on vulnerability review of a specific file, PR, or repo composes with `code-security-analysis` — this skill owns quality and design, that one owns the security finding. Network behavior questions compose with `network-engineering`; reporting deliverables about development work compose with `executive-reporting`.
 
 **Reference files:**
 
@@ -167,6 +169,47 @@ application-architecture/
     ├── java.md
     ├── python.md
     └── shell-scripting.md
+```
+
+### code-security-analysis
+
+Hands-on security review of real code and application artifacts — source files, repositories, diffs, dependency manifests, configuration, and IaC — producing classified, prioritized, remediation-ready findings. It runs a review the way a review actually finds bugs: not by grepping for dangerous function names, which finds the shallow 40% and misses every authorization flaw, but by tracing untrusted input to where it does damage. Two failure modes govern its standards — noise that trains developers to ignore findings, and confidence that misses the auth bug sitting in plain sight — and the skill is built to avoid both.
+
+The standards it enforces on itself:
+
+- **Every finding carries its fix.** A finding without a fix is homework, not help — remediation is working code in the codebase's own language and style, and it explains *why* the fix closes the flow, so the finding doubles as a teaching artifact rather than a lint hit to paste and forget.
+- **False-positive discipline.** Uncertainty is stated as uncertainty — "injectable if `user_id` reaches this untrusted, trace shown" is a different finding from "injectable, here's the request" — and missing context (framework version, whether an input is trusted, deployment model) gets asked for, not silently assumed worst. A report padded with guesses loses the credibility that gets the real findings fixed.
+- **Severity honesty.** No inflating an internal-tool XSS to critical because XSS sounds bad, no deflating an auth bypass to medium because the fix is expensive. Best-practice items are labeled hardening and kept in their own section, cleanly apart from exploitable findings, so the severity gradient — the report's most valuable signal — stays credible.
+- **Coverage honesty.** The review states what it analyzed and what it couldn't — runtime behavior, environment config it can't see, code outside the provided scope — because a review that implies a completeness it doesn't have is worse than one that names its blind spots.
+- **Defensive purpose, stated in the skill.** It explains the attack path in prose to the depth a fix needs, but does not produce weaponized exploit code, bypass tooling, or working payloads beyond the minimal illustrative case a fix must defend against. Found secrets are treated as live and reported for immediate rotation, never tested for validity — using the credential is the breach, not the check for it. Reviewing unfamiliar or third-party code for backdoors, obfuscated exfiltration, and malicious install scripts is in scope as defensive work.
+
+The methodology is ordered on purpose — scope first, then entry points, then trust boundaries, then source-to-sink reasoning — because authorization flaws are invisible to pattern matching (the vulnerability is a *missing* check, which looks like nothing) and only surface when you read the logic and ask "where is the check that this caller may touch this object?" AI-generated code gets checked harder, not softer: plausible-looking security code is read as wrong until proven right, and every imported package is verified to exist, because hallucinated and slopsquatted dependencies are a live entry vector.
+
+**Triggers when** you say "review this code for vulnerabilities," "is this secure" or "is this exploitable," "scan this repo for secrets," ask for a "security review" of a file, PR, or repo, ask "is this query injection-safe," want to "audit this Dockerfile/pipeline/Terraform/Kubernetes manifest," "check these dependencies" for known CVEs, or "harden this code" — and whenever you paste code with any security question attached, even a one-liner. It also fires on inspecting third-party code for backdoors, exfiltration, or malicious install scripts.
+
+**What it will not do alone:** code quality, idioms, and design review with no security question compose with `application-architecture` — that skill owns quality and design, this one owns the security finding. AppSec program architecture, security-tool-category strategy, framework and compliance mapping, and formal CVSS scoring compose with `cybersecurity-architecture` (including its `cvss.md` reference for vector strings and its appsec/data-crypto domains for vaulting and encryption architecture). ML-model-specific analysis — poisoning, adversarial input, model supply chain — composes with `ai-ml-engineering`, while this skill still reviews the code around the model. Leadership-facing report deliverables compose with `executive-reporting`. And it does not run code or confirm exploitability at runtime, does not certify a codebase as secure (absence of found bugs in scope is not proof of security, and the coverage section says so), and does not produce offensive tooling or working exploits beyond the minimal proof a fix must defend against.
+
+**Reference files:**
+
+- `methodology.md` — how a review runs: depth tiers (triage, deep, diff-focused PR, each with what it can't conclude), entry-point enumeration, trust-boundary mapping before pattern matching, taint reasoning and the sanitizer-that-doesn't rule, the manual/tool split, validation before reporting, and reviewing AI-generated code as its own discipline
+- `vulnerability-classes.md` — the CWE-anchored, OWASP-mapped taxonomy with per-language notes across C++, Java, .NET, Python, shell, and JS/TS: the injection family, authn/session flaws, authorization logic as a first-class section (IDOR, missing function-level checks, confused deputy), deserialization, SSRF, path traversal, XXE, races/TOCTOU, memory safety, cryptographic misuse, and unsafe reflection
+- `secrets-detection.md` — secret classes and their shapes, the pattern/entropy/context detection layers, where secrets actually hide (git history included), assume-live triage, and the rotate-then-purge-then-prevent order
+- `dependencies-supplychain.md` — known-CVE matching against per-ecosystem manifests and lockfiles, transitive reality, reachability honesty, patch/pin/replace guidance, typosquat and hallucinated-package checks, install-script risk, and lockfile hygiene
+- `config-iac-analysis.md` — Dockerfiles, Kubernetes manifests, Terraform and cloud IaC, CI/CD pipeline definitions, and application config, each with the misconfiguration, why it's exploitable, and the corrected stanza
+- `data-handling.md` — sensitive data into logs, errors, and traces; PII in URLs; analytics and crash reporters; client-side storage; over-broad serialization; and the retention patterns worth flagging for the compliance conversation
+- `reporting.md` — the finding format (impact-first title, evidence and flow, CWE, severity with reasoning, exploitability, remediation code, verification step), risk-ordered report assembly, the false-positive log as a deliverable, re-review discipline, and the executive rollup
+
+```
+code-security-analysis/
+├── SKILL.md
+└── references/
+    ├── config-iac-analysis.md
+    ├── data-handling.md
+    ├── dependencies-supplychain.md
+    ├── methodology.md
+    ├── reporting.md
+    ├── secrets-detection.md
+    └── vulnerability-classes.md
 ```
 
 ### networking-architecture
@@ -270,6 +313,9 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 ├── application-architecture/
 │   ├── SKILL.md
 │   └── references/
+├── code-security-analysis/
+│   ├── SKILL.md
+│   └── references/
 ├── networking-architecture/
 │   ├── SKILL.md
 │   └── references/
@@ -283,6 +329,7 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 │   ├── cybersecurity-architecture.skill
 │   ├── ai-ml-engineering.skill
 │   ├── application-architecture.skill
+│   ├── code-security-analysis.skill
 │   ├── networking-architecture.skill
 │   ├── network-engineering.skill
 │   └── executive-reporting.skill
@@ -343,13 +390,13 @@ These skills use only the open Agent Skills format — a `SKILL.md` with standar
 
 These are the rules the skills enforce on themselves, and they're the same rules a new skill has to meet before it lands here:
 
-**Framework claims carry identifiers.** A control ID, a technique ID, a requirement number, a vector string. A claim that can't be pinned to an identifier gets verified or gets flagged — it doesn't get asserted.
+**Framework claims carry identifiers.** A control ID, a technique ID, a requirement number, a CWE ID, a CVSS vector string. A claim that can't be pinned to an identifier gets verified or gets flagged — it doesn't get asserted.
 
-**Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, CMMC program status, language LTS lines, model names and benchmarks, vendor market positions — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
+**Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, CMMC program status, OWASP Top 10 and ASVS editions, language LTS lines, model names and benchmarks, vendor market positions — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
 
 **Vendor-neutral throughout.** Categories, representative players, and selection criteria — never a single vendor as the answer.
 
-**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method — and a question spanning boundaries composes the skills rather than getting a half-answer from either. The cybersecurity-architecture domain files carry these boundary sentences internally too: its network-perimeter file owns security policy and zone architecture while device engineering stays with `network-engineering` and SASE strategy with `networking-architecture`, and its appsec file owns gate placement while coding practice stays with `application-architecture`.
+**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method; `code-security-analysis` owns the hands-on vulnerability finding in a specific file or repo, `application-architecture` owns code quality and design, and `cybersecurity-architecture` owns the AppSec program and framework layer above both — and a question spanning boundaries composes the skills rather than getting a half-answer from either. The cybersecurity-architecture domain files carry these boundary sentences internally too: its network-perimeter file owns security policy and zone architecture while device engineering stays with `network-engineering` and SASE strategy with `networking-architecture`, and its appsec file owns gate placement while coding practice stays with `application-architecture` and per-artifact review stays with `code-security-analysis`.
 
 **Reference files load on demand.** The core `SKILL.md` stays lean; deep material sits in `references/` and loads only when the task calls for it. That's what the format is for.
 
@@ -371,7 +418,7 @@ This repository is licensed under the [Apache License 2.0](LICENSE).
 
 These skills reference security frameworks, standards, and compliance regimes, but their output is not legal, audit, or compliance advice, and it is not an attestation of anything. Gap analyses and mappings produced with these skills inform your work; only a qualified assessor can certify it, and GDPR questions with legal weight belong with counsel or a DPO.
 
-MITRE ATT&CK® and MITRE ATLAS are the work of The MITRE Corporation, with ATT&CK's registered mark acknowledged. NIST publications are the work of the National Institute of Standards and Technology. CVSS is maintained by FIRST. PCI DSS belongs to the PCI Security Standards Council; SOC 2 to the AICPA; CMMC to the U.S. Department of Defense; the GDPR to the European Union. All cited frameworks and standards belong to their respective owners; this repository maps to them, it doesn't reproduce or replace them.
+MITRE ATT&CK® and MITRE ATLAS are the work of The MITRE Corporation, with ATT&CK's registered mark acknowledged. NIST publications are the work of the National Institute of Standards and Technology. CVSS is maintained by FIRST. The CWE list is maintained by The MITRE Corporation; the OWASP Top 10 and ASVS by the OWASP Foundation. PCI DSS belongs to the PCI Security Standards Council; SOC 2 to the AICPA; CMMC to the U.S. Department of Defense; the GDPR to the European Union. All cited frameworks and standards belong to their respective owners; this repository maps to them, it doesn't reproduce or replace them.
 
 ## Contributing
 
