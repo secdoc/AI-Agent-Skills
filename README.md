@@ -1,7 +1,7 @@
 # secdoc skills
 
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Skills](https://img.shields.io/badge/skills-8-blue)
+![Skills](https://img.shields.io/badge/skills-9-blue)
 ![Format](https://img.shields.io/badge/format-Agent%20Skills%20(open%20standard)-informational)
 
 Practitioner-built skills for AI assistants — instruction sets that hold an assistant's output to the same standards I hold my own work to: framework claims with identifiers, versions verified before citing, vendor neutrality, and no invented data. I'm a working security architect; these were built for my own use, tested in real architecture and reporting work, and published here for anyone to install. Each one is an Agent Skill in the open skill format — a `SKILL.md` with YAML frontmatter plus optional reference files that load on demand — so they run in Claude and in any agent product that supports the format.
@@ -16,6 +16,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
   - [code-security-analysis](#code-security-analysis)
   - [networking-architecture](#networking-architecture)
   - [network-engineering](#network-engineering)
+  - [linux-engineering](#linux-engineering)
   - [executive-reporting](#executive-reporting)
 - [Repository layout](#repository-layout)
 - [Installation](#installation)
@@ -36,6 +37,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 | [code-security-analysis](#code-security-analysis) | Hands-on security review of code and artifacts — findings that get fixed | Vulnerability classes, secrets, dependencies/supply chain, config/IaC, data handling, reporting | [`/code-security-analysis.skill`](/code-security-analysis.skill) |
 | [networking-architecture](#networking-architecture) | Vendor-neutral enterprise network architecture guidance | WAN/SD-WAN, SASE/SSE, zero trust, segmentation, cloud/edge | [`/networking-architecture.skill`](/networking-architecture.skill) |
 | [network-engineering](#network-engineering) | Mechanically precise networking fundamentals | Routing protocols, OSI/TCP-IP models, troubleshooting, topology design | [`/network-engineering.skill`](/network-engineering.skill) |
+| [linux-engineering](#linux-engineering) | The operating-system floor — Linux/Unix administration through fleet automation | System internals, administration, the Linux networking stack, scripting/automation, performance troubleshooting, host hardening | [`/linux-engineering.skill`](/linux-engineering.skill) |
 | [executive-reporting](#executive-reporting) | Turns messy mixed sources into traceable executive deliverables | Email briefs, Word reports, PowerPoint decks | [`/executive-reporting.skill`](/executive-reporting.skill) |
 
 ### cybersecurity-architecture
@@ -309,6 +311,46 @@ network-engineering/
     └── topology-design.md
 ```
 
+### linux-engineering
+
+The operating-system floor of the library — expert answers and work products across Linux and Unix-based systems, from first-boot administration to fleet-grade automation, in the voice of an engineer who has actually recovered the box. When the machine under a networking, security, or application question is Linux, this is the skill the others stand on.
+
+The standards it enforces on itself:
+
+- **Show the output.** Commands appear with representative output, because the output is where understanding lives and where the next question comes from. A command with no output shown is half an answer.
+- **Family marking is mandatory.** Any command, path, or default that varies by distribution family carries a bracketed family tag — `[Debian-family]`, `[RHEL-family]`, `[SUSE-family]` — with the major equivalents named, matching the convention my teaching materials already run. Genuinely universal commands carry no tag; an untagged family-specific claim is an error.
+- **Unix honesty.** Where BSD or commercial Unix diverges in ways that matter — flag dialects, init systems, ZFS-native platforms, packaging — the divergence is named rather than papered over, and "on Linux" is said when only Linux is meant.
+- **Modern and honest tooling.** systemd, journalctl, `ip`, `ss`, and nftables taught in the present tense with their predecessors named as history the installed base still contains — read fluency, not endorsement. Version-sensitive facts (current releases, default filesystems, tool availability) are verified at use time, never asserted stale; the durable layer — inodes, signals, permissions — is taught as durable.
+- **Every recommendation with a trade-off states it.** ext4 versus XFS versus ZFS versus Btrfs is a decision table, not a favorite.
+- **The safety discipline.** Destructive operations — `rm` with globs, `dd`, `mkfs`, partition writes, LVM removals, recursive chmod/chown, anything piped to a shell from the network — always ship with their blast radius stated, a verification step before the trigger is pulled (list what will be affected; confirm the device node twice; on fleets, one host before all hosts), and a recovery note: the backup, the snapshot, the second terminal already logged in. `curl | sh` gets its risk named every time it appears.
+
+It carries a teaching mode built on the same conventions as my course materials: the terminal as a conversation — prompt, command, output, next command — concept before flag soup, one worked example before the general rule, and the classic misconceptions checked (`chmod 777` as a "fix," editing sudoers without visudo, killing processes to "free" the page cache, trusting a load average without asking what Linux actually counts in it).
+
+**Triggers when** you ask to set up, configure, or manage users, storage, services, mounts, or packages; ask systemd or init questions or "why won't it boot"; raise kernel, sysctl, or module questions; weigh LVM, RAID, or filesystem choices; say "harden this server"; ask about SSH configuration, permissions and ACLs, cron and timers, or journalctl and /var/log; say "load average is high," "out of memory," "disk is full," or "what is eating my CPU"; ask bash or shell questions in an operations context; or paste terminal output, a config file, or a shell script with a fix-this or what-does-this-mean question. BSD, AIX, Solaris, and macOS-as-Unix phrasings trigger it too.
+
+**What it will not do alone:** language engineering — idioms, when a script should become a Python program, cross-platform development practice — composes with `application-architecture`, whose shell-scripting discipline is the craft canon this skill builds automation on. Routing protocols, switch/router/firewall devices, and network design compose with `network-engineering` and `networking-architecture` — this skill configures Linux's own stack and hands off at the wire. Security architecture, framework mapping, and compliance language compose with `cybersecurity-architecture` — this skill executes the hardening mechanics; that skill names the controls. Config and script security review composes with `code-security-analysis`, and the log pipelines it builds feed the SOC/SIEM territory and the leadership rollups `executive-reporting` covers downstream. A spanning question composes skills rather than choosing one.
+
+**Reference files:**
+
+- `system-internals.md` — the boot chain with where each failure mode announces itself, systemd at depth (units, targets, ordering, the journal, generators), the kernel interface (modules, sysctl, /proc and /sys), processes and signals done precisely (what SIGKILL cannot do, zombies without folklore), memory (the page cache and why "free" isn't, the OOM killer's logic), and filesystems from the inside — VFS, inodes, journaling, and the ext4/XFS/ZFS/Btrfs decision table with the ZFS licensing note
+- `administration.md` — users, groups, and PAM at the depth an admin debugs; package management across families with repository trust and update-cadence-as-security-hygiene; the storage lifecycle (GPT, LVM with snapshot discipline, software RAID with rebuild-time honesty, fstab and the systemd mount-unit reality, quotas); unit files written properly with drop-ins over edits; cron and timers as a pair; backup engineering (3-2-1, restore-testing as the actual backup); journal persistence and the rsyslog/SIEM forwarding pipeline; KVM/libvirt and containers as an admin concern; and configuration management as a category, with the threshold a fleet has to cross to earn it
+- `networking-stack.md` — who owns this interface (networkd/NetworkManager/ifupdown/netplan, family-tagged), addressing and policy routing with `ip`, name resolution (nsswitch, systemd-resolved, the stub and the symlink), nftables as the present tense with iptables translation, bridges/bonds/VLANs and the veth-and-namespace container substrate, SSH engineering at depth (the hardening order that doesn't lock you out, certificates at fleet scale, why ProxyJump replaces agent forwarding), and the outward diagnostic ladder — link, address, route, resolution, port, path
+- `scripting-automation.md` — bash beyond the basics (arrays, parameter expansion as the tool that replaces sed half the time, traps, process substitution, getopts), the text toolchain with awk given its due as the language it is, robust-script patterns (`set -euo pipefail` with its caveats stated, flock, idempotence, dry-run flags as a design habit), ShellCheck as non-negotiable and bats at orientation, the timer-unit-over-cron worked pair, Python-for-operations at orientation with the promotion rule deferred by pointer, and the fleet loop over SSH with its limits stated — the honest on-ramp to configuration management
+- `performance-troubleshooting.md` — method before tools (USE, hypothesis-driven debugging, reproduce before fixing), load average told honestly (uninterruptible I/O wait counts, and 4.0 means nothing without core count), the observation toolkit by resource, the deleted-but-open full-disk classic, the eBPF era at orientation with its kernel-dependency flag, sar and atop for the after-the-fact question, the full-disk / out-of-memory / high-load ladders written as ladders, and reading the kernel's own reports — dmesg, oops messages, and pressure stall information as the modern signal
+- `hardening-security.md` — the minimal-install discipline, SSH hardening as the first act with the lockout warning stated explicitly, sudo granularity and NOPASSWD honesty, SELinux taught as contexts-booleans-and-the-audit-log rather than "just disable it" alongside AppArmor as profiles, auditd and file-integrity monitoring at working depth, the default-deny host firewall stance with family-tagged frontends, update automation, secure boot and LUKS at orientation, and CIS-benchmark execution mechanics with scoring honesty and the compose-upward pointer for control language
+
+```
+linux-engineering/
+├── SKILL.md
+└── references/
+    ├── administration.md
+    ├── hardening-security.md
+    ├── networking-stack.md
+    ├── performance-troubleshooting.md
+    ├── scripting-automation.md
+    └── system-internals.md
+```
+
 ### executive-reporting
 
 Synthesizes messy mixed sources — email threads, documents, spreadsheets, web data, meeting notes, metrics exports — into executive deliverables in three output types: an email brief, a Word report, or a PowerPoint deck. Document production itself is delegated to the platform's document skills; this skill's job is the synthesis discipline in front of it.
@@ -366,6 +408,9 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 ├── network-engineering/
 │   ├── SKILL.md
 │   └── references/
+├── linux-engineering/
+│   ├── SKILL.md
+│   └── references/
 ├── executive-reporting/
 │   ├── SKILL.md
 │   └── references/
@@ -377,6 +422,7 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 │   ├── code-security-analysis.skill
 │   ├── networking-architecture.skill
 │   ├── network-engineering.skill
+│   ├── linux-engineering.skill
 │   └── executive-reporting.skill
 ├── LICENSE
 └── README.md
@@ -437,11 +483,11 @@ These are the rules the skills enforce on themselves, and they're the same rules
 
 **Framework claims carry identifiers.** A control ID, a technique ID, a requirement number, a CWE ID, a CVSS vector string. A claim that can't be pinned to an identifier gets verified or gets flagged — it doesn't get asserted.
 
-**Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, CMMC program status, OWASP Top 10 and ASVS editions, language LTS lines, model names and benchmarks, vendor market positions — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
+**Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, CMMC program status, OWASP Top 10 and ASVS editions, language LTS lines, model names and benchmarks, vendor market positions, distro releases and default filesystems — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
 
 **Vendor-neutral throughout.** Categories, representative players, and selection criteria — never a single vendor as the answer.
 
-**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method; `code-security-analysis` owns the hands-on vulnerability finding in a specific file or repo, `application-architecture` owns code quality and design, and `cybersecurity-architecture` owns the AppSec program and framework layer above both; `risk-threat-modeling` owns assessment execution against design artifacts while `cybersecurity-architecture` keeps the framework knowledge it executes against and `code-security-analysis` keeps the code-level finding — and a question spanning boundaries composes the skills rather than getting a half-answer from either. The cybersecurity-architecture domain files carry these boundary sentences internally too: its network-perimeter file owns security policy and zone architecture while device engineering stays with `network-engineering` and SASE strategy with `networking-architecture`, and its appsec file owns gate placement while coding practice stays with `application-architecture` and per-artifact review stays with `code-security-analysis`.
+**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method; `code-security-analysis` owns the hands-on vulnerability finding in a specific file or repo, `application-architecture` owns code quality and design, and `cybersecurity-architecture` owns the AppSec program and framework layer above both; `risk-threat-modeling` owns assessment execution against design artifacts while `cybersecurity-architecture` keeps the framework knowledge it executes against and `code-security-analysis` keeps the code-level finding; `linux-engineering` owns the operating system itself — administration, internals, the host's own network stack, and hardening mechanics — handing off at the wire to the networking skills, composing upward to `cybersecurity-architecture` for control language, and building its automation on `application-architecture`'s shell-scripting canon — and a question spanning boundaries composes the skills rather than getting a half-answer from either. The cybersecurity-architecture domain files carry these boundary sentences internally too: its network-perimeter file owns security policy and zone architecture while device engineering stays with `network-engineering` and SASE strategy with `networking-architecture`, and its appsec file owns gate placement while coding practice stays with `application-architecture` and per-artifact review stays with `code-security-analysis`.
 
 **Reference files load on demand.** The core `SKILL.md` stays lean; deep material sits in `references/` and loads only when the task calls for it. That's what the format is for.
 
@@ -461,9 +507,9 @@ I'm a senior cybersecurity architect with 25+ years in the field, author of the 
 
 This repository is licensed under the [Apache License 2.0](LICENSE).
 
-These skills reference security frameworks, standards, and compliance regimes, but their output is not legal, audit, or compliance advice, and it is not an attestation of anything. Gap analyses, threat models, risk registers, and mappings produced with these skills inform your work; only a qualified assessor can certify it, and GDPR questions with legal weight belong with counsel or a DPO.
+These skills reference security frameworks, standards, and compliance regimes, but their output is not legal, audit, or compliance advice, and it is not an attestation of anything. Gap analyses, threat models, risk registers, and mappings produced with these skills inform your work; only a qualified assessor can certify it, and GDPR questions with legal weight belong with counsel or a DPO. The `linux-engineering` skill describes system-administration and hardening operations, including destructive ones; you run commands against your own systems at your own judgment, with the backups and verification steps the skill itself insists on.
 
-MITRE ATT&CK® and MITRE ATLAS are the work of The MITRE Corporation, with ATT&CK's registered mark acknowledged. NIST publications are the work of the National Institute of Standards and Technology. CVSS is maintained by FIRST. The CWE list is maintained by The MITRE Corporation; the OWASP Top 10 and ASVS by the OWASP Foundation. PCI DSS belongs to the PCI Security Standards Council; SOC 2 to the AICPA; CMMC to the U.S. Department of Defense; the GDPR to the European Union. All cited frameworks and standards belong to their respective owners; this repository maps to them, it doesn't reproduce or replace them.
+MITRE ATT&CK® and MITRE ATLAS are the work of The MITRE Corporation, with ATT&CK's registered mark acknowledged. NIST publications are the work of the National Institute of Standards and Technology. CVSS is maintained by FIRST. The CWE list is maintained by The MITRE Corporation; the OWASP Top 10 and ASVS by the OWASP Foundation. PCI DSS belongs to the PCI Security Standards Council; SOC 2 to the AICPA; CMMC to the U.S. Department of Defense; the GDPR to the European Union. CIS Benchmarks belong to the Center for Internet Security. All cited frameworks and standards belong to their respective owners; this repository maps to them, it doesn't reproduce or replace them.
 
 ## Contributing
 
