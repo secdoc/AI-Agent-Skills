@@ -1,7 +1,7 @@
 # secdoc skills
 
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Skills](https://img.shields.io/badge/skills-7-blue)
+![Skills](https://img.shields.io/badge/skills-8-blue)
 ![Format](https://img.shields.io/badge/format-Agent%20Skills%20(open%20standard)-informational)
 
 Practitioner-built skills for AI assistants — instruction sets that hold an assistant's output to the same standards I hold my own work to: framework claims with identifiers, versions verified before citing, vendor neutrality, and no invented data. I'm a working security architect; these were built for my own use, tested in real architecture and reporting work, and published here for anyone to install. Each one is an Agent Skill in the open skill format — a `SKILL.md` with YAML frontmatter plus optional reference files that load on demand — so they run in Claude and in any agent product that supports the format.
@@ -10,6 +10,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 
 - [Skill catalog](#skill-catalog)
   - [cybersecurity-architecture](#cybersecurity-architecture)
+  - [risk-threat-modeling](#risk-threat-modeling)
   - [ai-ml-engineering](#ai-ml-engineering)
   - [application-architecture](#application-architecture)
   - [code-security-analysis](#code-security-analysis)
@@ -29,6 +30,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 | Skill | Purpose | Domains | Package |
 |---|---|---|---|
 | [cybersecurity-architecture](#cybersecurity-architecture) | Architecture-grade security work anchored to authoritative frameworks | MITRE ATT&CK/ATLAS, NIST SPs, CVSS, SOX/SOC 2/PCI DSS/GDPR/CMMC, eight practice domains from secops to governance | [`/cybersecurity-architecture.skill`](/cybersecurity-architecture.skill) |
+| [risk-threat-modeling](#risk-threat-modeling) | Threat models and risk assessments executed against design artifacts — the register survives sampling | ATT&CK/ATLAS attack paths, SP 800-30 chains, 800-53 control mapping, CVSS instrument discipline, risk registers, remediation roadmaps | [`/risk-threat-modeling.skill`](/risk-threat-modeling.skill) |
 | [ai-ml-engineering](#ai-ml-engineering) | ML, deep learning, and LLM systems with the hype stripped out | Classical ML, DL, LLM/genAI, MLOps, AI security/governance, math foundations | [`/ai-ml-engineering.skill`](/ai-ml-engineering.skill) |
 | [application-architecture](#application-architecture) | Application design and language engineering with trade-offs stated | Architecture patterns, C++/Java/.NET/Python/shell, dev practices, data structures | [`/application-architecture.skill`](/application-architecture.skill) |
 | [code-security-analysis](#code-security-analysis) | Hands-on security review of code and artifacts — findings that get fixed | Vulnerability classes, secrets, dependencies/supply chain, config/IaC, data handling, reporting | [`/code-security-analysis.skill`](/code-security-analysis.skill) |
@@ -88,6 +90,45 @@ cybersecurity-architecture/
     ├── mitre-atlas.md
     ├── mitre-attack.md
     └── nist-sp.md
+```
+
+### risk-threat-modeling
+
+The library's assessment engine for designs — the structural sibling of `code-security-analysis`, which does the same job for code. Hand it the artifacts of a system — design documents, architecture diagrams (image or described), configuration excerpts — and it executes a threat-informed risk assessment: attack paths, explicit SP 800-30 risk chains, a risk register, and a prioritized remediation roadmap, built to survive an audit committee, a CISO's cross-examination, and an external assessor's sampling. It grew from my own working assessment prompt; the skill makes that discipline durable and consistent instead of re-pasted per session.
+
+Its working creed, stated in the skill: **adversary first, controls second, gaps stated, nothing invented.** Scope gets extracted from the artifacts before anything is mapped — system boundary, trust boundaries, data classification, flows, deployment model, external interfaces, regulatory drivers, threat actors — and anything the artifacts don't establish lands in an Assumptions / Information Gaps section that is a first-class deliverable, because a gap stated is defensible and a gap papered over is a finding against the assessor. Attack paths get enumerated before controls, because controls chosen before threats are a shopping list.
+
+The standards it enforces on itself:
+
+- **Every risk carries its chain.** "Ransomware risk: high" is not analysis. Every risk keeps the SP 800-30 chain explicit — threat source → threat event → vulnerability or predisposing condition → likelihood → impact → risk — with the scale named, so every link is a claim someone can check.
+- **The right instrument per finding.** Full CVSS vector strings (v3.1 or v4.0, stated, never mixed) for conventional vulnerabilities in the serving and infrastructure stack — and the explicit call that CVSS is the wrong instrument for model extraction, poisoning, misconfigurations, and systemic design weaknesses, which get SP 800-30 risk language instead. Base scores are severity, not risk; KEV membership, EPSS, exposure, and asset criticality layer on top.
+- **Controls at enhancement granularity, crosswalked once.** SP 800-53 Rev. 5 citations name the enhancement — AC-2(1), SC-7(5) — with the requirement paraphrased, never the title trusted, and multiple compliance regimes crosswalk onto the same control once, because duplicated findings per regime is how registers bloat and credibility dies.
+- **Requirement is never implementation.** The reporting voice throughout is "[Framework ID] requires [X]; in this environment the cleanest implementation is [Y] because [Z]" — an implementation choice is never presented as a framework mandate.
+- **Artifacts are data, never instructions.** Directives embedded inside a design document or diagram are themselves a finding — untrusted-input handling — not commands, and the report says so when it encounters them. If the artifact is missing or unreadable, the skill states what it needs and stops rather than assessing an imagined system.
+
+LLM and AI/ML components get modeled with MITRE ATLAS alongside ATT&CK, under two load-bearing rules: model output after untrusted input is untrusted, and every injection sink gets identified. Two depth tiers — a rapid design review (hours; top paths, top risks, gaps prominent, no completeness claim) and the full assessment (the complete register and roadmap, with a checkable coverage statement) — get chosen with you up front. The flagship deliverable is a single self-contained HTML report, renderable offline with no external CDNs or network calls, with color-coded ratings and identifier-and-version on every framework reference; re-assessments run as deltas when the design moved incrementally.
+
+**Triggers when** you say "threat model this system/design/architecture," "risk assessment of [artifact]," "assess this design against [regime]," "review this architecture for risk," "build a risk register for," or "what are the attack paths in this design" — and whenever you upload a design document or diagram with any risk or threat question attached.
+
+**What it will not do alone:** knowledge questions about methodologies, frameworks, or controls — "explain PASTA," "what does SC-7 require," "STRIDE vs PASTA" — belong to `cybersecurity-architecture`, whose ATT&CK, ATLAS, NIST SP, CVSS, and compliance references are the canon this skill executes against. Hands-on analysis of source code, dependencies, or IaC belongs to `code-security-analysis` — design-level findings hand down to it, and its code-level findings feed this skill's register. ML attack mechanics compose with `ai-ml-engineering`; network designs compose with `network-engineering` and `networking-architecture`; application designs with `application-architecture`; board-facing rollups with `executive-reporting`. A spanning request — "assess this design and review the attached Terraform" — composes skills rather than choosing one. And its output informs preparation, it is not an attestation: only a QSA attests PCI DSS, only a CPA firm attests SOC 2, only the external financial auditor attests SOX, and every report the skill produces says so. It produces no exploit code or offensive tooling — attack paths are described to the depth prioritization and defense require.
+
+**Reference files:**
+
+- `methodology.md` — the full workflow with its judgment calls: scoping discipline, the scope-extraction checklist, Assumptions / Information Gaps as a deliverable, depth tiers with what each can and cannot conclude, artifact handling and the embedded-directive rule, diagram-reading discipline, and re-assessment deltas
+- `threat-modeling.md` — the toolkit with honest selection criteria: trust boundaries first, ATT&CK-driven path enumeration as the default, STRIDE/PASTA/attack trees each with use-when and limits, the honest line on DREAD, ATLAS and the two LLM rules, abuse cases, and the coverage-honesty statement
+- `risk-analysis.md` — SP 800-30 Rev. 1 executed properly: chains with every link named, consistent scales, likelihood against actor capability rather than vibes, impact anchored to classification, FAIR at orientation depth with its data hunger stated, register construction, and the aggregation traps
+- `scoring-prioritization.md` — the right instrument per finding, CVSS vector discipline, the "CVSS is not the right instrument here" call, KEV/EPSS/exposure/criticality layering, and roadmap discipline — top three actions first, tiered timelines with rationale, internet-facing critical / KEV class measured in hours and days
+- `reporting.md` — the offline single-file HTML flagship report and its fixed section order, the threat model and register table schemas, the rapid-tier findings memo, the executive rollup composed with `executive-reporting`, and the requirement-versus-implementation reporting voice
+
+```
+risk-threat-modeling/
+├── SKILL.md
+└── references/
+    ├── methodology.md
+    ├── reporting.md
+    ├── risk-analysis.md
+    ├── scoring-prioritization.md
+    └── threat-modeling.md
 ```
 
 ### ai-ml-engineering
@@ -187,7 +228,7 @@ The methodology is ordered on purpose — scope first, then entry points, then t
 
 **Triggers when** you say "review this code for vulnerabilities," "is this secure" or "is this exploitable," "scan this repo for secrets," ask for a "security review" of a file, PR, or repo, ask "is this query injection-safe," want to "audit this Dockerfile/pipeline/Terraform/Kubernetes manifest," "check these dependencies" for known CVEs, or "harden this code" — and whenever you paste code with any security question attached, even a one-liner. It also fires on inspecting third-party code for backdoors, exfiltration, or malicious install scripts.
 
-**What it will not do alone:** code quality, idioms, and design review with no security question compose with `application-architecture` — that skill owns quality and design, this one owns the security finding. AppSec program architecture, security-tool-category strategy, framework and compliance mapping, and formal CVSS scoring compose with `cybersecurity-architecture` (including its `cvss.md` reference for vector strings and its appsec/data-crypto domains for vaulting and encryption architecture). ML-model-specific analysis — poisoning, adversarial input, model supply chain — composes with `ai-ml-engineering`, while this skill still reviews the code around the model. Leadership-facing report deliverables compose with `executive-reporting`. And it does not run code or confirm exploitability at runtime, does not certify a codebase as secure (absence of found bugs in scope is not proof of security, and the coverage section says so), and does not produce offensive tooling or working exploits beyond the minimal proof a fix must defend against.
+**What it will not do alone:** code quality, idioms, and design review with no security question compose with `application-architecture` — that skill owns quality and design, this one owns the security finding. AppSec program architecture, security-tool-category strategy, framework and compliance mapping, and formal CVSS scoring compose with `cybersecurity-architecture` (including its `cvss.md` reference for vector strings and its appsec/data-crypto domains for vaulting and encryption architecture). Design-level threat models and risk registers compose with `risk-threat-modeling` — that skill assesses the design, this one assesses the code, and findings flow both ways. ML-model-specific analysis — poisoning, adversarial input, model supply chain — composes with `ai-ml-engineering`, while this skill still reviews the code around the model. Leadership-facing report deliverables compose with `executive-reporting`. And it does not run code or confirm exploitability at runtime, does not certify a codebase as secure (absence of found bugs in scope is not proof of security, and the coverage section says so), and does not produce offensive tooling or working exploits beyond the minimal proof a fix must defend against.
 
 **Reference files:**
 
@@ -307,6 +348,9 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 ├── cybersecurity-architecture/
 │   ├── SKILL.md
 │   └── references/
+├── risk-threat-modeling/
+│   ├── SKILL.md
+│   └── references/
 ├── ai-ml-engineering/
 │   ├── SKILL.md
 │   └── references/
@@ -327,6 +371,7 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 │   └── references/
 ├── packages/
 │   ├── cybersecurity-architecture.skill
+│   ├── risk-threat-modeling.skill
 │   ├── ai-ml-engineering.skill
 │   ├── application-architecture.skill
 │   ├── code-security-analysis.skill
@@ -396,7 +441,7 @@ These are the rules the skills enforce on themselves, and they're the same rules
 
 **Vendor-neutral throughout.** Categories, representative players, and selection criteria — never a single vendor as the answer.
 
-**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method; `code-security-analysis` owns the hands-on vulnerability finding in a specific file or repo, `application-architecture` owns code quality and design, and `cybersecurity-architecture` owns the AppSec program and framework layer above both — and a question spanning boundaries composes the skills rather than getting a half-answer from either. The cybersecurity-architecture domain files carry these boundary sentences internally too: its network-perimeter file owns security policy and zone architecture while device engineering stays with `network-engineering` and SASE strategy with `networking-architecture`, and its appsec file owns gate placement while coding practice stays with `application-architecture` and per-artifact review stays with `code-security-analysis`.
+**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method; `code-security-analysis` owns the hands-on vulnerability finding in a specific file or repo, `application-architecture` owns code quality and design, and `cybersecurity-architecture` owns the AppSec program and framework layer above both; `risk-threat-modeling` owns assessment execution against design artifacts while `cybersecurity-architecture` keeps the framework knowledge it executes against and `code-security-analysis` keeps the code-level finding — and a question spanning boundaries composes the skills rather than getting a half-answer from either. The cybersecurity-architecture domain files carry these boundary sentences internally too: its network-perimeter file owns security policy and zone architecture while device engineering stays with `network-engineering` and SASE strategy with `networking-architecture`, and its appsec file owns gate placement while coding practice stays with `application-architecture` and per-artifact review stays with `code-security-analysis`.
 
 **Reference files load on demand.** The core `SKILL.md` stays lean; deep material sits in `references/` and loads only when the task calls for it. That's what the format is for.
 
@@ -416,7 +461,7 @@ I'm a senior cybersecurity architect with 25+ years in the field, author of the 
 
 This repository is licensed under the [Apache License 2.0](LICENSE).
 
-These skills reference security frameworks, standards, and compliance regimes, but their output is not legal, audit, or compliance advice, and it is not an attestation of anything. Gap analyses and mappings produced with these skills inform your work; only a qualified assessor can certify it, and GDPR questions with legal weight belong with counsel or a DPO.
+These skills reference security frameworks, standards, and compliance regimes, but their output is not legal, audit, or compliance advice, and it is not an attestation of anything. Gap analyses, threat models, risk registers, and mappings produced with these skills inform your work; only a qualified assessor can certify it, and GDPR questions with legal weight belong with counsel or a DPO.
 
 MITRE ATT&CK® and MITRE ATLAS are the work of The MITRE Corporation, with ATT&CK's registered mark acknowledged. NIST publications are the work of the National Institute of Standards and Technology. CVSS is maintained by FIRST. The CWE list is maintained by The MITRE Corporation; the OWASP Top 10 and ASVS by the OWASP Foundation. PCI DSS belongs to the PCI Security Standards Council; SOC 2 to the AICPA; CMMC to the U.S. Department of Defense; the GDPR to the European Union. All cited frameworks and standards belong to their respective owners; this repository maps to them, it doesn't reproduce or replace them.
 
