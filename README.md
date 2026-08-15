@@ -1,7 +1,7 @@
 # secdoc skills
 
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Skills](https://img.shields.io/badge/skills-10-blue)
+![Skills](https://img.shields.io/badge/skills-11-blue)
 ![Format](https://img.shields.io/badge/format-Agent%20Skills%20(open%20standard)-informational)
 
 Practitioner-built skills for AI assistants — instruction sets that hold an assistant's output to the same standards I hold my own work to: framework claims with identifiers, versions verified before citing, vendor neutrality, and no invented data. I'm a working security architect; these were built for my own use, tested in real architecture and reporting work, and published here for anyone to install. Each one is an Agent Skill in the open skill format — a `SKILL.md` with YAML frontmatter plus optional reference files that load on demand — so they run in Claude and in any agent product that supports the format.
@@ -16,6 +16,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
   - [code-security-analysis](#code-security-analysis)
   - [networking-architecture](#networking-architecture)
   - [network-engineering](#network-engineering)
+  - [firewall-platform-engineering](#firewall-platform-engineering)
   - [linux-engineering](#linux-engineering)
   - [windows-engineering](#windows-engineering)
   - [executive-reporting](#executive-reporting)
@@ -38,6 +39,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 | [code-security-analysis](#code-security-analysis) | Hands-on security review of code and artifacts — findings that get fixed | Vulnerability classes, secrets, dependencies/supply chain, config/IaC, data handling, reporting | [`/code-security-analysis.skill`](/code-security-analysis.skill) |
 | [networking-architecture](#networking-architecture) | Vendor-neutral enterprise network architecture guidance | WAN/SD-WAN, SASE/SSE, zero trust, segmentation, cloud/edge | [`/networking-architecture.skill`](/networking-architecture.skill) |
 | [network-engineering](#network-engineering) | Mechanically precise networking fundamentals | Routing protocols, OSI/TCP-IP models, troubleshooting, topology design | [`/network-engineering.skill`](/network-engineering.skill) |
+| [firewall-platform-engineering](#firewall-platform-engineering) | Product-specific firewall implementation for OPNsense, pfSense, and UniFi | Rule models, NAT, routing/PBR, VPN, HA, IDS/IPS, DNS/DHCP, config lifecycle, cross-platform translation | [`/firewall-platform-engineering.skill`](/firewall-platform-engineering.skill) |
 | [linux-engineering](#linux-engineering) | The operating-system floor — Linux/Unix administration through fleet automation | System internals, administration, the Linux networking stack, scripting/automation, performance troubleshooting, host hardening | [`/linux-engineering.skill`](/linux-engineering.skill) |
 | [windows-engineering](#windows-engineering) | The Microsoft floor — Windows clients and servers, Active Directory, Azure, and Entra ID from install to hardening | Platform internals and deployment, AD at depth, server/workstation administration, hybrid identity, Azure infrastructure, hardening mechanics, troubleshooting | [`/windows-engineering.skill`](/windows-engineering.skill) |
 | [executive-reporting](#executive-reporting) | Turns messy mixed sources into traceable executive deliverables | Email briefs, Word reports, PowerPoint decks | [`/executive-reporting.skill`](/executive-reporting.skill) |
@@ -296,7 +298,7 @@ The boundary with `networking-architecture` is stated in the frontmatter and hol
 
 **Triggers when** you ask how a routing protocol actually works, need a layer-by-layer walk through the OSI or TCP/IP models and their protocols, are troubleshooting by layer, are designing or reviewing a topology from campus three-tier to spine-leaf — and in teaching contexts: Network+ and CCNA study questions trigger it too.
 
-**What it will not do:** it does not answer strategy and market questions — those are `networking-architecture`'s trigger space, and this skill defers to it rather than overlapping.
+**What it will not do:** it does not answer strategy and market questions — those are `networking-architecture`'s trigger space, and this skill defers to it rather than overlapping. Product-specific firewall implementation — building the actual rules, NAT, and routing on OPNsense, pfSense, or UniFi — belongs to `firewall-platform-engineering`, which builds on the protocol mechanics this skill owns.
 
 **Reference files:**
 
@@ -311,6 +313,49 @@ network-engineering/
     ├── osi-model-protocols.md
     ├── routing-protocols.md
     └── topology-design.md
+```
+
+### firewall-platform-engineering
+
+The product-specific implementation layer for three firewall products: OPNsense, Netgate pfSense (Community Edition and Plus), and Ubiquiti UniFi (the Network application and the Cloud Gateway line). Where the networking skills stay vendor-neutral, this one names menu paths, packages, services, and CLI on real shipping versions, because the question "how do I actually build this on this box" needs an answer for that box, not a category.
+
+It is product-specific by design, and the SKILL.md says so in one sentence. That makes it the third declared exception to the library's vendor-neutral rule, alongside the two OS-floor skills. The discipline that keeps it honest is a durable-versus-perishable split written into the file structure: mechanics that rarely change (how pf evaluates a ruleset first-match with `quick`, how NAT translates before it filters, what a state is, how policy routing picks a gateway, how CARP elects a master) are stated as fact and carried across all three products, while specifics that shift often (versions, GUI menu paths, package names, default backends) are marked and dated to a version check, verified at use rather than recalled. These products move fast, so the split is load-bearing: OPNsense ships twice a year, pfSense Plus is mid-transition from the legacy PHP GUI to the Go-based Netgate Nexus controller, and UniFi renames menu paths between minor releases. The shipping baseline it was built and dated against, all flagged verify-at-use: OPNsense 26.7, pfSense CE 2.8.1 and pfSense Plus 26.07 with Nexus, and UniFi Network 9.x with the zone-based firewall.
+
+The standards it enforces on itself:
+
+- **Name the exact construct.** "Firewall > NAT > Outbound, Hybrid mode" or "Settings > Zones > Create Policy," never "the NAT settings," with the package, service, and CLI tool (pfctl, configctl, nft, vtysh) named where it matters. An unattributed menu path is a bug in the answer.
+- **Attribute every path and version to a product and mark it perishable.** A path that is right on pfSense CE is wrong on OPNsense and wrong again on the pfSense Plus Nexus GUI, so nothing is presented as shared layout.
+- **Translate mechanic to mechanic, never implying parity that does not exist.** UniFi has no CARP; OPNsense has no ThreatGate. The cross-platform reference names the gaps rather than papering over them.
+
+**Triggers when** a question names one of these products or their constructs: OPNsense/pfSense floating rules and aliases, Firewall > NAT outbound/port-forward/1:1/NPt, CARP and pfsync, Unbound and Kea, Suricata/Snort/pfBlockerNG/Zenarmor, the os-frr or FRR package, the pfSense Plus Nexus GUI on port 8443; or UniFi zones and the zone matrix, the External/Internal/Gateway/VPN/DMZ/Hotspot zones, ZBF migration, Teleport, threat management and CyberSecure, and the UDM/UXG/UCG/Cloud Gateway hardware. It also fires on "how do I do X on OPNsense/pfSense/UniFi," on translating a rule or route across the three, and on teaching or writing about these products.
+
+**What it will not do alone:** vendor-neutral protocol mechanics belong to `network-engineering` (how OSPF floods LSAs, what a state table is in the abstract), and this skill implements them on the specific box. Network strategy and product-tier choice belong to `networking-architecture` (SASE, MPLS versus SD-WAN, which tier fits a site), and this skill takes over once the product is chosen. Firewall policy, zone architecture, and control-language framing belong to `cybersecurity-architecture` (what the policy should allow, how zones map to a trust model, how a rulebase maps to NIST or PCI), and this skill expresses that policy as OPNsense floating rules or a UniFi zone matrix. It composes upward to all three and does not restate them.
+
+**Reference files:**
+
+- `firewall-rules.md` — the rule model on each platform: pf first-match and the role of `quick`, states, aliases as tables, interface versus floating rules on OPNsense and pfSense; UniFi zones, the zone matrix, source-to-destination evaluation, and the one-way legacy-to-ZBF migration
+- `nat.md` — outbound, port forward, 1:1, and IPv6 NPt; the order of translation before filtering and why the permitting rule targets the internal address; and the UniFi rule that a port forward needs a matching zone allow policy
+- `routing-pbr.md` — static routes, gateways, gateway groups and multi-WAN, policy routing by setting a gateway on a rule, and dynamic routing through FRR (OSPF and BGP) including where UniFi does and does not expose it
+- `vpn.md` — IPsec site-to-site and mobile, OpenVPN, and WireGuard on OPNsense and pfSense; UniFi site-to-site, VPN server and client, and Teleport; with AllowedIPs explained as routing and ACL at once
+- `high-availability.md` — CARP, pfsync, and XMLRPC config sync as three separate mechanisms on the pf platforms, and the honest limit that UniFi has no equivalent
+- `ids-ips-filtering.md` — Suricata and Snort, pfBlockerNG, and Zenarmor; UniFi threat management, CyberSecure, and DPI traffic identification; with the IDS-versus-inline-IPS trade stated
+- `dns-dhcp-services.md` — Unbound and Dnsmasq, the ISC-to-Kea DHCP move, and the pfSense Plus CoreDNS/rexdns and ThreatGate additions; UniFi's dnsmasq-based equivalents
+- `management-config-lifecycle.md` — web GUI, console and SSH, the single-file config.xml model and backup/restore, the pfSense Plus Nexus transition on port 8443, and UniFi controller topology with where an engineer drops beneath it to nftables and FRR
+- `cross-platform-translation.md` — the concept map across all three products, and the four gaps to UniFi named plainly: no CARP/pfsync, partial dynamic routing, no exposed recursive resolver, no single config file
+
+```
+firewall-platform-engineering/
+├── SKILL.md
+└── references/
+    ├── cross-platform-translation.md
+    ├── dns-dhcp-services.md
+    ├── firewall-rules.md
+    ├── high-availability.md
+    ├── ids-ips-filtering.md
+    ├── management-config-lifecycle.md
+    ├── nat.md
+    ├── routing-pbr.md
+    └── vpn.md
 ```
 
 ### linux-engineering
@@ -452,6 +497,9 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 ├── network-engineering/
 │   ├── SKILL.md
 │   └── references/
+├── firewall-platform-engineering/
+│   ├── SKILL.md
+│   └── references/
 ├── linux-engineering/
 │   ├── SKILL.md
 │   └── references/
@@ -469,6 +517,7 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 │   ├── code-security-analysis.skill
 │   ├── networking-architecture.skill
 │   ├── network-engineering.skill
+│   ├── firewall-platform-engineering.skill
 │   ├── linux-engineering.skill
 │   ├── windows-engineering.skill
 │   └── executive-reporting.skill
@@ -531,11 +580,11 @@ These are the rules the skills enforce on themselves, and they're the same rules
 
 **Framework claims carry identifiers.** A control ID, a technique ID, a requirement number, a CWE ID, a CVSS vector string. A claim that can't be pinned to an identifier gets verified or gets flagged — it doesn't get asserted.
 
-**Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, CMMC program status, OWASP Top 10 and ASVS editions, language LTS lines, model names and benchmarks, vendor market positions, distro releases and default filesystems, Microsoft product names, licensing-tier placements, and deprecation schedules — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
+**Version-sensitive facts get verified at use time.** ATT&CK releases, CVSS versions, PCI DSS revisions, CMMC program status, OWASP Top 10 and ASVS editions, language LTS lines, model names and benchmarks, vendor market positions, distro releases and default filesystems, firewall-platform release versions and their shifting GUI menu paths, Microsoft product names, licensing-tier placements, and deprecation schedules — anything that moves is checked against the canonical source when cited, not baked into the skill to go stale.
 
-**Vendor-neutral throughout.** Categories, representative players, and selection criteria — never a single vendor as the answer. The two OS-floor skills are scoped to their platforms by design, but within them the same rule holds: current product names verified rather than recalled, and licensing claims dated, never asserted.
+**Vendor-neutral throughout, with three declared exceptions.** Categories, representative players, and selection criteria — never a single vendor as the answer. Three skills are product-specific by design: the two OS-floor skills and `firewall-platform-engineering`, which owns the implementation layer for OPNsense, pfSense, and UniFi. Within them the same rule holds: current product names and versions verified rather than recalled, GUI paths and licensing claims dated, never asserted.
 
-**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics, `networking-architecture` owns strategy and market; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method; `code-security-analysis` owns the hands-on vulnerability finding in a specific file or repo, `application-architecture` owns code quality and design, and `cybersecurity-architecture` owns the AppSec program and framework layer above both; `risk-threat-modeling` owns assessment execution against design artifacts while `cybersecurity-architecture` keeps the framework knowledge it executes against and `code-security-analysis` keeps the code-level finding; `linux-engineering` owns the operating system itself — administration, internals, the host's own network stack, and hardening mechanics — handing off at the wire to the networking skills, composing upward to `cybersecurity-architecture` for control language, and building its automation on `application-architecture`'s shell-scripting canon; `windows-engineering` is its Microsoft sibling floor — Windows administration, Active Directory, hybrid identity, and Azure-for-Windows — owning PowerShell-for-administration while `application-architecture` keeps the language craft, handing off at the wire like its sibling, executing hardening whose control language composes upward, and splitting mixed estates with `linux-engineering` by platform — and a question spanning boundaries composes the skills rather than getting a half-answer from either. The cybersecurity-architecture domain files carry these boundary sentences internally too: its network-perimeter file owns security policy and zone architecture while device engineering stays with `network-engineering` and SASE strategy with `networking-architecture`, and its appsec file owns gate placement while coding practice stays with `application-architecture` and per-artifact review stays with `code-security-analysis`.
+**Sibling skills partition, they don't overlap.** Related skills draw their trigger boundary explicitly — `network-engineering` owns protocol mechanics and `networking-architecture` owns strategy and market, while `firewall-platform-engineering` owns the product-specific implementation layer for OPNsense, pfSense, and UniFi and composes upward to both, and to `cybersecurity-architecture` for firewall policy and zone architecture as control language; `ai-ml-engineering` owns ML attack mechanics, `cybersecurity-architecture` owns the ATLAS mapping and review method; `code-security-analysis` owns the hands-on vulnerability finding in a specific file or repo, `application-architecture` owns code quality and design, and `cybersecurity-architecture` owns the AppSec program and framework layer above both; `risk-threat-modeling` owns assessment execution against design artifacts while `cybersecurity-architecture` keeps the framework knowledge it executes against and `code-security-analysis` keeps the code-level finding; `linux-engineering` owns the operating system itself — administration, internals, the host's own network stack, and hardening mechanics — handing off at the wire to the networking skills, composing upward to `cybersecurity-architecture` for control language, and building its automation on `application-architecture`'s shell-scripting canon; `windows-engineering` is its Microsoft sibling floor — Windows administration, Active Directory, hybrid identity, and Azure-for-Windows — owning PowerShell-for-administration while `application-architecture` keeps the language craft, handing off at the wire like its sibling, executing hardening whose control language composes upward, and splitting mixed estates with `linux-engineering` by platform — and a question spanning boundaries composes the skills rather than getting a half-answer from either. The cybersecurity-architecture domain files carry these boundary sentences internally too: its network-perimeter file owns security policy and zone architecture while device engineering stays with `network-engineering`, platform-specific firewall implementation stays with `firewall-platform-engineering`, and SASE strategy stays with `networking-architecture`, and its appsec file owns gate placement while coding practice stays with `application-architecture` and per-artifact review stays with `code-security-analysis`.
 
 **Reference files load on demand.** The core `SKILL.md` stays lean; deep material sits in `references/` and loads only when the task calls for it. That's what the format is for.
 
@@ -555,9 +604,9 @@ I'm a senior cybersecurity architect with 25+ years in the field, author of the 
 
 This repository is licensed under the [Apache License 2.0](LICENSE).
 
-These skills reference security frameworks, standards, and compliance regimes, but their output is not legal, audit, or compliance advice, and it is not an attestation of anything. Gap analyses, threat models, risk registers, and mappings produced with these skills inform your work; only a qualified assessor can certify it, and GDPR questions with legal weight belong with counsel or a DPO. The `linux-engineering` and `windows-engineering` skills describe system-administration and hardening operations, including destructive and identity-authority ones — disk operations, FSMO seizures, directory restores, schema changes; you run commands against your own systems and directories at your own judgment, with the backups, staging, and verification steps the skills themselves insist on.
+These skills reference security frameworks, standards, and compliance regimes, but their output is not legal, audit, or compliance advice, and it is not an attestation of anything. Gap analyses, threat models, risk registers, and mappings produced with these skills inform your work; only a qualified assessor can certify it, and GDPR questions with legal weight belong with counsel or a DPO. The `linux-engineering` and `windows-engineering` skills describe system-administration and hardening operations, including destructive and identity-authority ones — disk operations, FSMO seizures, directory restores, schema changes; you run commands against your own systems and directories at your own judgment, with the backups, staging, and verification steps the skills themselves insist on. The `firewall-platform-engineering` skill describes changes to live firewalls, including ones that can cut off your own access or cannot be undone, such as rule and NAT edits, HA failover, the pfSense Plus Nexus transition, and the irreversible UniFi zone-based-firewall migration; you apply them against your own devices at your own judgment, with console access and a saved configuration in hand, as the skill itself insists.
 
-MITRE ATT&CK® and MITRE ATLAS are the work of The MITRE Corporation, with ATT&CK's registered mark acknowledged. NIST publications are the work of the National Institute of Standards and Technology. CVSS is maintained by FIRST. The CWE list is maintained by The MITRE Corporation; the OWASP Top 10 and ASVS by the OWASP Foundation. PCI DSS belongs to the PCI Security Standards Council; SOC 2 to the AICPA; CMMC to the U.S. Department of Defense; the GDPR to the European Union. CIS Benchmarks belong to the Center for Internet Security. Microsoft, Windows, Windows Server, Active Directory, Azure, Microsoft Entra, Hyper-V, BitLocker, Intune, and Defender are trademarks of the Microsoft group of companies. All cited frameworks, standards, and products belong to their respective owners; this repository maps to them, it doesn't reproduce or replace them.
+MITRE ATT&CK® and MITRE ATLAS are the work of The MITRE Corporation, with ATT&CK's registered mark acknowledged. NIST publications are the work of the National Institute of Standards and Technology. CVSS is maintained by FIRST. The CWE list is maintained by The MITRE Corporation; the OWASP Top 10 and ASVS by the OWASP Foundation. PCI DSS belongs to the PCI Security Standards Council; SOC 2 to the AICPA; CMMC to the U.S. Department of Defense; the GDPR to the European Union. CIS Benchmarks belong to the Center for Internet Security. Microsoft, Windows, Windows Server, Active Directory, Azure, Microsoft Entra, Hyper-V, BitLocker, Intune, and Defender are trademarks of the Microsoft group of companies. OPNsense is a registered trademark of Deciso B.V. pfSense and Netgate are registered trademarks of Rubicon Communications, LLC. Ubiquiti and UniFi are trademarks of Ubiquiti Inc. All cited frameworks, standards, and products belong to their respective owners; this repository maps to them, it doesn't reproduce or replace them.
 
 ## Contributing
 
