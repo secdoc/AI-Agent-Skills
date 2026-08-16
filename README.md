@@ -1,6 +1,6 @@
 # secdoc skills
 
-![License](https://img.shields.io/badge/license-Apache%202.0-blue)
+![License](https://img.shields.io/badge/code-Apache%202.0-blue) ![Docs License](https://img.shields.io/badge/docs-CC%20BY%204.0-green)
 ![Skills](https://img.shields.io/badge/skills-13-blue)
 ![Format](https://img.shields.io/badge/format-Agent%20Skills%20(open%20standard)-informational)
 
@@ -624,7 +624,7 @@ I'm a senior cybersecurity architect with 25+ years in the field, author of the 
 
 ## License and disclaimer
 
-This repository is licensed under the [Apache License 2.0](LICENSE).
+This repository is dual-licensed, **attribution required**: code and skill definitions under the [Apache License 2.0](LICENSE); documentation, guides, and diagrams under [CC BY 4.0](LICENSE-docs). See [`LICENSING.md`](LICENSING.md) and [`NOTICE`](NOTICE). Credit: Lester E. Nichols III, secdoc.tech.
 
 These skills reference security frameworks, standards, and compliance regimes, but their output is not legal, audit, or compliance advice, and it is not an attestation of anything. Gap analyses, threat models, risk registers, and mappings produced with these skills inform your work; only a qualified assessor can certify it, and GDPR questions with legal weight belong with counsel or a DPO. The `linux-engineering` and `windows-engineering` skills describe system-administration and hardening operations, including destructive and identity-authority ones — disk operations, FSMO seizures, directory restores, schema changes; you run commands against your own systems and directories at your own judgment, with the backups, staging, and verification steps the skills themselves insist on. The `firewall-platform-engineering` skill describes changes to live firewalls, including ones that can cut off your own access or cannot be undone, such as rule and NAT edits, HA failover, the pfSense Plus Nexus transition, and the irreversible UniFi zone-based-firewall migration; you apply them against your own devices at your own judgment, with console access and a saved configuration in hand, as the skill itself insists.
 
