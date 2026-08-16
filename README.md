@@ -1,7 +1,7 @@
 # secdoc skills
 
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Skills](https://img.shields.io/badge/skills-11-blue)
+![Skills](https://img.shields.io/badge/skills-13-blue)
 ![Format](https://img.shields.io/badge/format-Agent%20Skills%20(open%20standard)-informational)
 
 Practitioner-built skills for AI assistants — instruction sets that hold an assistant's output to the same standards I hold my own work to: framework claims with identifiers, versions verified before citing, vendor neutrality, and no invented data. I'm a working security architect; these were built for my own use, tested in real architecture and reporting work, and published here for anyone to install. Each one is an Agent Skill in the open skill format — a `SKILL.md` with YAML frontmatter plus optional reference files that load on demand — so they run in Claude and in any agent product that supports the format.
@@ -43,6 +43,8 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 | [linux-engineering](#linux-engineering) | The operating-system floor — Linux/Unix administration through fleet automation | System internals, administration, the Linux networking stack, scripting/automation, performance troubleshooting, host hardening | [`/linux-engineering.skill`](/linux-engineering.skill) |
 | [windows-engineering](#windows-engineering) | The Microsoft floor — Windows clients and servers, Active Directory, Azure, and Entra ID from install to hardening | Platform internals and deployment, AD at depth, server/workstation administration, hybrid identity, Azure infrastructure, hardening mechanics, troubleshooting | [`/windows-engineering.skill`](/windows-engineering.skill) |
 | [executive-reporting](#executive-reporting) | Turns messy mixed sources into traceable executive deliverables | Email briefs, Word reports, PowerPoint decks | [`/executive-reporting.skill`](/executive-reporting.skill) |
+| [wazuh](#wazuh) | Wazuh SIEM/XDR deployment, integration, and troubleshooting that survives contact with real pipelines | Manager/indexer/dashboard architecture, agent lifecycle, decoders/rules, alerts-vs-archives diagnosis, network-device syslog, UniFi integration, tuning, MITRE tagging | [`/wazuh.skill`](/wazuh.skill) |
+| [graylog](#graylog) | Graylog log management from input to SIEM view, with honest Open-vs-Enterprise boundaries | Inputs/pipelines/streams/index sets, journal diagnostics, grok parsing, sizing and retention, UniFi pipeline, Graylog+Wazuh combined architecture | [`/graylog.skill`](/graylog.skill) |
 
 ### cybersecurity-architecture
 
@@ -469,6 +471,26 @@ executive-reporting/
     ├── pptx-deck.md
     └── word-report.md
 ```
+
+### wazuh
+
+Product-specific skill for the Wazuh SIEM/XDR platform: manager, indexer, dashboard, and agent fleet. Durable pipeline mechanics (pre-decode, decode, rule match, alert threshold) are stated as fact; version-bound paths, ports, and defaults are marked `(v)` with a checked date, following the same durable-versus-perishable convention as firewall-platform-engineering.
+
+The core of the skill is diagnostic discipline. Most "Wazuh is not working" reports are the alerts-versus-archives distinction: events that decode but match no rule above the alert threshold are invisible in the default dashboard, and the fix is rule coverage, not ingestion surgery. The skill enforces a strict four-stage diagnosis (wire, read, decode, alert) with wazuh-logtest at its center, and refuses to let troubleshooting skip stages.
+
+Reference files carry a full UniFi-to-Wazuh integration (sender config, decoder skeletons for zone-block lines, storm and management-plane rules, validation loop), a symptom-indexed troubleshooting runbook (agent disconnects, indexer red, disk watermarks, silent ingestion death), and a tuning guide (alert-level strategy, noise-reduction workflow, CDB lists, MITRE tagging discipline, active-response cautions).
+
+**What it will not do:** it does not pretend Wazuh is a general log-exploration platform; heavy raw-log search and long retention route to the graylog skill, and vendor-neutral SOC strategy routes to cybersecurity-architecture.
+
+### graylog
+
+Product-specific skill for Graylog log management: inputs, pipeline rules, streams, index sets, events, and the operational failure modes between them. Same durable-versus-perishable convention; Open-versus-Enterprise feature boundaries are flagged explicitly so the skill never recommends a paid feature as if it were free.
+
+The skill centers on the message flow (input, pipeline, stream, index set) and the two gauges that explain most incidents: the disk journal (climbing utilization means the store cannot keep up) and the message-processor order setting that silently breaks pipeline rules. Parsing guidance prefers pipelines over legacy extractors, pushes noise-dropping before indexing as the primary cost lever, and treats shard budget as the hidden constraint it is.
+
+Reference files carry the UniFi-to-Graylog pipeline end to end (input, ZBF grok rules, stream routing, block-storm event definitions, and fan-out forwarding of security streams to Wazuh for single-syslog-target devices), a symptom-indexed troubleshooting runbook, and a sizing/retention design guide (index-set classes, rotation strategy, heap and shard anchors, compliance retention mapping).
+
+**What it will not do:** it does not present Graylog Open as a detection-content platform; endpoint telemetry, FIM/SCA, compliance dashboards, and MITRE views belong to Wazuh, and the two skills compose deliberately in a combined architecture where each platform does what it is good at.
 
 ## Repository layout
 
