@@ -1,7 +1,7 @@
 # secdoc skills
 
 ![License](https://img.shields.io/badge/code-Apache%202.0-blue) ![Docs License](https://img.shields.io/badge/docs-CC%20BY%204.0-green)
-![Skills](https://img.shields.io/badge/skills-13-blue)
+![Skills](https://img.shields.io/badge/skills-14-blue)
 ![Format](https://img.shields.io/badge/format-Agent%20Skills%20(open%20standard)-informational)
 
 Practitioner-built skills for AI assistants — instruction sets that hold an assistant's output to the same standards I hold my own work to: framework claims with identifiers, versions verified before citing, vendor neutrality, and no invented data. I'm a working security architect; these were built for my own use, tested in real architecture and reporting work, and published here for anyone to install. Each one is an Agent Skill in the open skill format — a `SKILL.md` with YAML frontmatter plus optional reference files that load on demand — so they run in Claude and in any agent product that supports the format.
@@ -45,6 +45,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 | [executive-reporting](#executive-reporting) | Turns messy mixed sources into traceable executive deliverables | Email briefs, Word reports, PowerPoint decks | [`/executive-reporting.skill`](/executive-reporting.skill) |
 | [wazuh](#wazuh) | Wazuh SIEM/XDR deployment, integration, and troubleshooting that survives contact with real pipelines | Manager/indexer/dashboard architecture, agent lifecycle, decoders/rules, alerts-vs-archives diagnosis, network-device syslog, UniFi integration, tuning, MITRE tagging | [`/wazuh.skill`](/wazuh.skill) |
 | [graylog](#graylog) | Graylog log management from input to SIEM view, with honest Open-vs-Enterprise boundaries | Inputs/pipelines/streams/index sets, journal diagnostics, grok parsing, sizing and retention, UniFi pipeline, Graylog+Wazuh combined architecture | [`/graylog.skill`](/graylog.skill) |
+| [shuffle-soar](#shuffle-soar) | Driving Shuffle SOAR through its API and building workflows as code, with the self-hosted sharp edges mapped | Bearer/apikey auth, workflow-as-code (whole-object PUT), execute_python STDOUT contract, app-auth attachment, self-hosted/unlicensed limits (AI, schedule, list_cache), SIEM→webhook anti-flood | [`/shuffle-soar.skill`](/shuffle-soar.skill) |
 
 ### cybersecurity-architecture
 
@@ -491,6 +492,16 @@ The skill centers on the message flow (input, pipeline, stream, index set) and t
 Reference files carry the UniFi-to-Graylog pipeline end to end (input, ZBF grok rules, stream routing, block-storm event definitions, and fan-out forwarding of security streams to Wazuh for single-syslog-target devices), a symptom-indexed troubleshooting runbook, and a sizing/retention design guide (index-set classes, rotation strategy, heap and shard anchors, compliance retention mapping).
 
 **What it will not do:** it does not present Graylog Open as a detection-content platform; endpoint telemetry, FIM/SCA, compliance dashboards, and MITRE views belong to Wazuh, and the two skills compose deliberately in a combined architecture where each platform does what it is good at.
+
+### shuffle-soar
+
+Product-specific skill for driving Shuffle SOAR programmatically rather than through the drag-and-drop UI. It exists because Shuffle's API is excellent at triggering and reading workflows but sharp-edged at authoring them, and because a self-hosted, unlicensed instance silently disables several cloud features that tutorials assume are present.
+
+The skill states the durable mechanics as fact and flags per-deployment variance (host, ports, licensing, credential names) so nothing is assumed against the wrong instance. It documents the authentication trap (the Bearer apikey is the profile UUID, not the account password), the workflow-as-code contract (whole-object PUT, adapt shapes from a known-good workflow, read-back-verify each save), and the field-level gotchas that cost real debugging: `execute_python` returns STDOUT and its result is wrapped as `$Node.message.<field>`, app auth attaches via `authentication_id` rather than action parameters, and an app-auth `url` must be the base only to avoid path doubling.
+
+It maps the self-hosted/unlicensed limitations to verify through `getinfo` (cloud-only AI, non-functional schedule trigger, empty `list_cache`, UI-only webhook activation) so you design host-side around them instead of fighting the API, and it carries the SIEM-to-webhook integration pattern with the anti-flood rule: scope the forward by category/rule, never by severity alone.
+
+**What it will not do:** it is not UI click-through guidance and not a SIEM detection-content skill; alerting logic composes with the SIEM skills (wazuh, graylog), and Shuffle here is the response/automation layer.
 
 ## Repository layout
 
