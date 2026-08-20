@@ -20,6 +20,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
   - [linux-engineering](#linux-engineering)
   - [windows-engineering](#windows-engineering)
   - [executive-reporting](#executive-reporting)
+- [Runbooks](#runbooks)
 - [Repository layout](#repository-layout)
 - [Installation](#installation)
 - [Design principles](#design-principles)
@@ -503,6 +504,14 @@ It maps the self-hosted/unlicensed limitations to verify through `getinfo` (clou
 
 **What it will not do:** it is not UI click-through guidance and not a SIEM detection-content skill; alerting logic composes with the SIEM skills (wazuh, graylog), and Shuffle here is the response/automation layer.
 
+## Runbooks
+
+Standalone reference procedures (not skills). Anonymized so they are safe to hand to someone with no prior exposure to the system, and written to be followed literally. All IP addresses use RFC 5737 documentation ranges; substitute your own values.
+
+| Runbook | What it covers |
+|---|---|
+| [UniFi Firewall Assessment and Change Workflow](/runbooks/unifi-firewall-assessment-workflow.md) | End-to-end workflow for a UniFi Cloud Gateway (UniFi OS / Network 9.x, Zone-Based Firewall): API key setup and connectivity check, read-only full config snapshot, assessment of the pulled config, a disciplined one-change-at-a-time change-control loop via the API, and verification plus rollback. Includes the v2-vs-classic endpoint reference and the write gotchas (server-assigned policy index, BLOCK respond-policy flag, provisioning lag, VLAN-zone-move hazard) that cause real incidents. |
+
 ## Repository layout
 
 One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, plus a `references/` directory of files the skill loads on demand. The `packages/` directory holds each skill packaged as an archive for direct install — same content as the folder, in two forms. Future skills land as new top-level folders following the same convention, with a catalog subsection added above by the same rules.
@@ -554,6 +563,8 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 │   ├── linux-engineering.skill
 │   ├── windows-engineering.skill
 │   └── executive-reporting.skill
+├── runbooks/
+│   └── unifi-firewall-assessment-workflow.md
 ├── LICENSE
 └── README.md
 ```
