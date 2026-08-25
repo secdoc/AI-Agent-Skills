@@ -110,6 +110,7 @@ Its working creed, stated in the skill: **adversary first, controls second, gaps
 
 The standards it enforces on itself:
 
+- **Timestamp-first threat-model artifacts.** Every threat-model filename starts with `YYYYmmdd_hh:mm:ss_name`, using the assessment-start time. Companion HTML, `.tm`, SVG, JSON, and evidence files share the same prefix, while the report metadata states the timezone.
 - **Every risk carries its chain.** "Ransomware risk: high" is not analysis. Every risk keeps the SP 800-30 chain explicit — threat source → threat event → vulnerability or predisposing condition → likelihood → impact → risk — with the scale named, so every link is a claim someone can check.
 - **The right instrument per finding.** Full CVSS vector strings (v3.1 or v4.0, stated, never mixed) for conventional vulnerabilities in the serving and infrastructure stack — and the explicit call that CVSS is the wrong instrument for model extraction, poisoning, misconfigurations, and systemic design weaknesses, which get SP 800-30 risk language instead. Base scores are severity, not risk; KEV membership, EPSS, exposure, and asset criticality layer on top.
 - **Controls at enhancement granularity, crosswalked once.** SP 800-53 Rev. 5 citations name the enhancement — AC-2(1), SC-7(5) — with the requirement paraphrased, never the title trusted, and multiple compliance regimes crosswalk onto the same control once, because duplicated findings per regime is how registers bloat and credibility dies.
