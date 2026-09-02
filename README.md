@@ -657,3 +657,8 @@ MITRE ATT&CK® and MITRE ATLAS are the work of The MITRE Corporation, with ATT&C
 ## Contributing
 
 This is a personal library published in the open, so treat it that way: issues and suggestions are welcome, and PRs get considered. The contribution bar is the design principles above — identifiers on framework claims, versions verified not assumed, vendor neutrality, lean core with on-demand references. If a change meets that bar, I want to see it.
+
+## GitLab CI baseline
+
+GitLab CI runs repository integrity validation and centralized ClamAV scanning on the isolated `phase4-untrusted` runner. The baseline validates tracked Python syntax, shell syntax, and JSON parsing without direct Internet access. Repository-specific build and test gates remain additive to this baseline.
+
