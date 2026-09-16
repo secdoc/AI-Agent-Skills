@@ -1,7 +1,7 @@
 # secdoc skills
 
 ![License](https://img.shields.io/badge/code-Apache%202.0-blue) ![Docs License](https://img.shields.io/badge/docs-CC%20BY%204.0-green)
-![Skills](https://img.shields.io/badge/skills-14-blue)
+![Skills](https://img.shields.io/badge/skills-15-blue)
 ![Format](https://img.shields.io/badge/format-Agent%20Skills%20(open%20standard)-informational)
 
 Practitioner-built skills for AI assistants — instruction sets that hold an assistant's output to the same standards I hold my own work to: framework claims with identifiers, versions verified before citing, vendor neutrality, and no invented data. I'm a working security architect; these were built for my own use, tested in real architecture and reporting work, and published here for anyone to install. Each one is an Agent Skill in the open skill format — a `SKILL.md` with YAML frontmatter plus optional reference files that load on demand — so they run in Claude and in any agent product that supports the format.
@@ -20,6 +20,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
   - [linux-engineering](#linux-engineering)
   - [windows-engineering](#windows-engineering)
   - [executive-reporting](#executive-reporting)
+  - [pico-prompt](#pico-prompt)
 - [Runbooks](#runbooks)
 - [Repository layout](#repository-layout)
 - [Installation](#installation)
@@ -47,6 +48,7 @@ Practitioner-built skills for AI assistants — instruction sets that hold an as
 | [wazuh](#wazuh) | Wazuh SIEM/XDR deployment, integration, and troubleshooting that survives contact with real pipelines | Manager/indexer/dashboard architecture, agent lifecycle, decoders/rules, alerts-vs-archives diagnosis, network-device syslog, UniFi integration, tuning, MITRE tagging | [`/wazuh.skill`](/wazuh.skill) |
 | [graylog](#graylog) | Graylog log management from input to SIEM view, with honest Open-vs-Enterprise boundaries | Inputs/pipelines/streams/index sets, journal diagnostics, grok parsing, sizing and retention, UniFi pipeline, Graylog+Wazuh combined architecture | [`/graylog.skill`](/graylog.skill) |
 | [shuffle-soar](#shuffle-soar) | Driving Shuffle SOAR through its API and building workflows as code, with the self-hosted sharp edges mapped | Bearer/apikey auth, workflow-as-code (whole-object PUT), execute_python STDOUT contract, app-auth attachment, self-hosted/unlicensed limits (AI, schedule, list_cache), SIEM→webhook anti-flood | [`/shuffle-soar.skill`](/shuffle-soar.skill) |
+| [pico-prompt](#pico-prompt) | Builds focused prompts using Persona, Instructions, Context, and Output | Prompt structure, role and tone, task definition, supporting context, output constraints | [`/pico-prompt.skill`](/pico-prompt.skill) |
 
 ### cybersecurity-architecture
 
@@ -506,6 +508,12 @@ It maps the self-hosted/unlicensed limitations to verify through `getinfo` (clou
 
 **What it will not do:** it is not UI click-through guidance and not a SIEM detection-content skill; alerting logic composes with the SIEM skills (wazuh, graylog), and Shuffle here is the response/automation layer.
 
+### pico-prompt
+
+A compact prompt-engineering skill built around PICO: Persona, Instructions, Context, and Output. It turns a user-provided topic into a consolidated prompt, shows how each PICO component contributes to that prompt, and provides a short structural overview.
+
+Use it when a prompt needs a clear role, an explicit task, enough supporting context, and a defined output format. The skill waits for the topic rather than inventing one, then returns a ready-to-use prompt plus the PICO breakdown.
+
 ## Runbooks
 
 Standalone reference procedures (not skills). Anonymized so they are safe to hand to someone with no prior exposure to the system, and written to be followed literally. All IP addresses use RFC 5737 documentation ranges; substitute your own values.
@@ -564,7 +572,8 @@ One folder per skill, each self-contained: a `SKILL.md` with YAML frontmatter, p
 │   ├── firewall-platform-engineering.skill
 │   ├── linux-engineering.skill
 │   ├── windows-engineering.skill
-│   └── executive-reporting.skill
+│   ├── executive-reporting.skill
+│   └── pico-prompt.skill
 ├── runbooks/
 │   └── unifi-firewall-assessment-workflow.md
 ├── LICENSE
